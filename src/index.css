@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer utilities {
+    .text-aurora {
+        @apply bg-clip-text text-transparent bg-linear-to-r from-indigo-500 to-fuchsia-500;
+    }
+    .bevel-full {
+        corner-shape: bevel;
+    }
+    .popover-option {
+        @apply flex items-center text-sm
+            px-4 py-2 gap-3 rounded-lg
+            text-gray-500 font-medium
+            transition duration-200
+            hover:bg-gray-100 hover:text-gray-800
+            disabled:opacity-50 disabled:cursor-not-allowed
+            dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+    }
+    .surface {
+        @apply bg-white dark:bg-gray-800 dark:text-gray-100;
+    }
+    .badge {
+        @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full;
+    }
+    .text-50 {
+        @apply text-gray-50  dark:text-gray-900;
+    }
+    .text-100 {
+        @apply text-gray-100 dark:text-gray-800;
+    }
+    .text-200 {
+        @apply text-gray-200 dark:text-gray-700;
+    }
+    .text-300 {
+        @apply text-gray-300 dark:text-gray-600;
+    }
+    .text-400 {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+    .text-500 {
+        @apply text-gray-500 dark:text-gray-400;
+    }
+    .text-600 {
+        @apply text-gray-600 dark:text-gray-300;
+    }
+    .text-700 {
+        @apply text-gray-700 dark:text-gray-200;
+    }
+    .text-800 {
+        @apply text-gray-800 dark:text-gray-100;
+    }
+    .text-900 {
+        @apply text-gray-900 dark:text-gray-50;
+    }
+    .animate-placeholder-fade::placeholder {
+        animation: placeholder-fade 0.4s ease-out;
+    }
+}
+
+@keyframes placeholder-fade {
+    0% {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
