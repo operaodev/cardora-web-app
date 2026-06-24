@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import LayoutMobile from "./mobile/LayoutMobile";
+import LayoutMobile from "./LayoutMobile";
 
 export default function Layout() {
   return (
