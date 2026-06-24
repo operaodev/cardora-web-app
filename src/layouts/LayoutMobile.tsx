@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify-icon/react";
-import { OverlayTransition } from "@/layouts/Overlay";
+import { OverlayTransition } from "@/components/modal/Overlay";
 import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "@/stores/useUserStore";
 import AuthPopover from "./AuthPopover";

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useUserStore } from "@/store/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import * as authApi from "@/api/auth";
 import type {
   LoginInput,

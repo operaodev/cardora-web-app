@@ -3,7 +3,7 @@ import { type TCG, type LangCode } from "@/types/product";
 import { randomNames } from "@/hooks/useProduct";
 import { Icon } from "@iconify-icon/react";
 import { useEffect, useRef, useState } from "react";
-import { PopoverRef } from "./Popover";
+import { PopoverRef } from "../components/modal/Popover";
 import type { SuggestionDTO, SuggestionInput } from "@/types/suggestion";
 import { Link } from "react-router-dom";
 import { useSuggestions } from "@/hooks/useSuggestions";

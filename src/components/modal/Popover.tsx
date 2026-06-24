@@ -64,8 +64,8 @@ export const PopoverRef = ({
           ...style,
         }}
         className={`
-          bg-white rounded-xl shadow-lg border border-gray-200
-          dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+          bg-white rounded-xl shadow-lg border-200
+          dark:bg-gray-800 dark:text-gray-100
           ${className}
         `}
       >

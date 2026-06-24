@@ -1,11 +1,11 @@
-import { PopoverRef } from "@/layouts/Popover";
+import { PopoverRef } from "@/components/modal/Popover";
 import { useUserStore } from "@/stores/useUserStore";
 import { Link } from "react-router-dom";
 import { Icon } from "@iconify-icon/react";
 
 const noAuthenticated = [
-  { title: "Iniciar sesión", icon: "mdi:login", to: "/login" },
-  { title: "Registrarse", icon: "mdi:register", to: "/register" },
+  { title: "Iniciar sesión", icon: "mdi:login", to: "login" },
+  { title: "Registrarse", icon: "mdi:register", to: "signup" },
   {
     title: "Iniciar como invitado",
     icon: "fluent:guest-24-filled",
@@ -23,11 +23,6 @@ const isGuest = [
   },
 ];
 
-const isUser = [
-  { title: "Mi perfil", icon: "fluent:person-24-filled", to: "/profile" },
-  { title: "Cerrar sesión", icon: "mdi:logout", to: "/logout" },
-];
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -35,7 +30,7 @@ interface Props {
 }
 
 export default function AuthPopover({ open, onClose, anchorRef }: Props) {
-  const { isAuthenticated, user } = useUserStore();
+  const { isAuthenticated, user, logout } = useUserStore();
 
   if (!isAuthenticated)
     return (
@@ -83,20 +78,20 @@ export default function AuthPopover({ open, onClose, anchorRef }: Props) {
       className="w-72 flex flex-col divide-y divide-gray-200 dark:divide-gray-700"
     >
       <div className="p-4">
-        <h4 className="font-medium text-gray-800 dark:text-gray-100">Opera</h4>
+        <h4 className="font-medium text-gray-800 dark:text-gray-100">{user?.name}</h4>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          opera@email.com
+          {user?.email}
         </p>
       </div>
       <div className="flex flex-col p-4">
-        {isUser.map((link) => {
-          return (
-            <Link key={link.title} to={link.to} className="popover-option">
-              <Icon icon={link.icon} className="text-2xl" />
-              {link.title}
-            </Link>
-          );
-        })}
+        <Link to="profile" className="popover-option">
+          <Icon icon="fluent:person-24-filled" className="text-2xl" />
+          Mi perfil
+        </Link>
+        <button onClick={logout} className="popover-option">
+          <Icon icon="mdi:logout" className="text-2xl" />
+          Cerrar sesión
+        </button>
       </div>
     </PopoverRef>
   );

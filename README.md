@@ -6,7 +6,7 @@ Aplicación mobile-first para el marketplace de cartas Cardora.
 
 ## Layouts y Componentes
 
-### LayoutMobile (`src/layouts/mobile/LayoutMobile.tsx`)
+### LayoutMobile (`src/layouts/LayoutMobile.tsx`)
 
 Layout principal mobile que organiza la app en una columna flexible. Contiene:
 
@@ -17,14 +17,14 @@ Layout principal mobile que organiza la app en una columna flexible. Contiene:
 
 El estado de tema oscuro se persiste en `localStorage` y se respeta la preferencia del sistema (`prefers-color-scheme`).
 
-### Overlay (`src/layouts/Overlay.tsx`)
+### Overlay (`src/components/modal/Overlay.tsx`)
 
 Componentes de superposición modal:
 
 - **`Overlay`** — overlay modal centrado con backdrop blur, útil para diálogos y modales genéricos
 - **`OverlayTransition`** — panel lateral animado que puede deslizarse desde la izquierda o la derecha. Incluye un botón de cierre circular con posicionamiento automático según el lado. Soporta transiciones de opacidad, backdrop blur y transformación CSS
 
-### Popover (`src/layouts/Popover.tsx`)
+### Popover (`src/components/modal/Popover.tsx`)
 
 Componentes de popover posicionados dinámicamente:
 
