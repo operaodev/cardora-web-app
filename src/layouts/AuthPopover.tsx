@@ -78,10 +78,8 @@ export default function AuthPopover({ open, onClose, anchorRef }: Props) {
       className="w-72 flex flex-col divide-y divide-gray-200 dark:divide-gray-700"
     >
       <div className="p-4">
-        <h4 className="font-medium text-gray-800 dark:text-gray-100">{user?.name}</h4>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {user?.email}
-        </p>
+        <h4 className="font-medium text-heading">{user?.name}</h4>
+        <p className="text-sm text-body">{user?.email}</p>
       </div>
       <div className="flex flex-col p-4">
         <Link to="profile" className="popover-option">
@@ -95,4 +93,4 @@ export default function AuthPopover({ open, onClose, anchorRef }: Props) {
       </div>
     </PopoverRef>
   );
-};
+}

@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   {
     title: "Mercado",
     icon: "mdi:store",
-    route: "/products",
+    route: "/marketplace",
     disabled: false,
   },
   {
@@ -39,7 +39,10 @@ export default function LayoutMobile() {
 
   const { isAuthenticated } = useUserStore();
   const navigate = useNavigate();
-  
+
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (
@@ -50,14 +53,59 @@ export default function LayoutMobile() {
     }
   }, []);
 
+  useEffect(() => {
+    const handle = () => {
+      const y = window.scrollY;
+
+      // Evitar ocultar si el menú lateral, popover de auth o el input del buscador tienen interacción activa/foco
+      const activeEl = document.activeElement;
+      const isInputFocused =
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "SELECT" ||
+          activeEl.tagName === "TEXTAREA");
+
+      if (showMenu || showAuth || isInputFocused) {
+        setHidden(false);
+        lastY.current = y;
+        return;
+      }
+
+      // Si está muy cerca del tope superior, mantenerlo siempre visible
+      if (y < 40) {
+        setHidden(false);
+        lastY.current = y;
+        return;
+      }
+
+      const delta = y - lastY.current;
+
+      // Umbral mínimo de scroll (10px) para evitar saltos y vibraciones
+      if (Math.abs(delta) < 10) return;
+
+      if (delta > 0 && y > 80) {
+        setHidden(true);
+      } else if (delta < 0) {
+        setHidden(false);
+      }
+
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", handle, { passive: true });
+    return () => window.removeEventListener("scroll", handle);
+  }, [showMenu, showAuth]);
+
   return (
     <div
-      className="
+      className={`
+        sticky z-50 top-0
         flex flex-col
-        min-w-svw py-2 px-3 gap-2
-        border-b border-gray-200 dark:border-gray-700
-        bg-white dark:bg-gray-900
-      "
+        w-full py-2 px-3 gap-2
+        border-b border-surface
+        surface
+        transition-transform duration-300
+        ${hidden ? "-translate-y-full" : "translate-y-0"}
+      `}
     >
       {showAuth && (
         <AuthPopover
@@ -77,10 +125,13 @@ export default function LayoutMobile() {
           <button
             disabled={item.disabled && !isAuthenticated}
             key={index}
-            onClick={() => navigate(item.route)}
+            onClick={() => {
+              navigate(item.route);
+              setShowMenu(false);
+            }}
             className="popover-option"
           >
-            <Icon icon={item.icon} className="text-3xl" />
+            <Icon icon={item.icon} className="text-2xl" />
             {item.title}
           </button>
         ))}
@@ -88,13 +139,13 @@ export default function LayoutMobile() {
           onClick={toggleTheme}
           className="popover-option mt-auto mr-auto"
         >
-          <Icon icon="fluent:dark-theme-24-filled" className="text-3xl" />
+          <Icon icon="fluent:dark-theme-24-filled" className="text-2xl" />
           Cambiar tema
         </button>
       </OverlayTransition>
 
       <div className="flex justify-between items-center gap-2">
-        <Link to="/" className="text-aurora font-bold text-2xl mr-auto">
+        <Link to="/" className="text-aurora font-bold text-xl mr-auto">
           Cardora
         </Link>
 
@@ -103,9 +154,8 @@ export default function LayoutMobile() {
           onClick={() => setShowAuth(true)}
           className="
             flex items-center justify-center
-            text-gray-500 hover:text-gray-700
+            text-second hover:text-label
             transition duration-200
-            dark:text-gray-400 dark:hover:text-gray-200
           "
         >
           <Icon icon="mingcute:user-4-fill" height={33} />
@@ -115,12 +165,10 @@ export default function LayoutMobile() {
           onClick={() => setShowMenu(true)}
           className="
             flex items-center justify-center w-7 h-7
-            border border-gray-200 rounded-md
-            text-gray-500 text-lg
-            hover:bg-gray-100 hover:border-gray-300
+            border-raised rounded-md
+            text-second text-lg
+            bg-raised
             transition duration-200
-            dark:border-gray-600 dark:text-gray-400
-            dark:hover:bg-gray-700 dark:hover:border-gray-500
           "
         >
           <Icon icon="material-symbols:menu" />

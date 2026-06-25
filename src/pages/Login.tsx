@@ -46,8 +46,10 @@ export default function Login() {
   return (
     <div className="space-y-6 p-6">
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-bold text-800">Iniciar sesión</h1>
-        <p className="text-sm text-500">
+        <h1 className="text-2xl font-bold text-hero">
+          Iniciar sesión
+        </h1>
+        <p className="text-sm text-second">
           Ingresa tus credenciales para acceder a tu cuenta.
         </p>
       </div>
@@ -75,7 +77,10 @@ export default function Login() {
               text-red-700 bg-red-50 border border-red-200
               dark:text-red-300 dark:bg-red-900/20 dark:border-red-800/40"
           >
-            <Icon icon="mdi:alert-circle" className="mt-0.5 shrink-0 text-base" />
+            <Icon
+              icon="mdi:alert-circle"
+              className="mt-0.5 shrink-0 text-base"
+            />
             <span>{displayError}</span>
           </div>
         )}
@@ -96,7 +101,7 @@ export default function Login() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-500">
+      <p className="text-center text-sm text-second">
         ¿No tienes cuenta?{" "}
         <Link
           to="/signup"

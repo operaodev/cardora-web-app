@@ -62,6 +62,14 @@ export interface ProductResumePage {
   total_pages: number;
 }
 
+export interface Page<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+}
+
 export interface FilterInput {
   input: string;
   tcgs?: string[];

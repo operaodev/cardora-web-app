@@ -19,6 +19,7 @@ export interface SuggestionDTO {
   rarity_code?: string;
   set_name?: string;
   set_code?: string;
+  set_region_code: string;
   lang?: string;
   language?: LangCode;
   image?: string;

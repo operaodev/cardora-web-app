@@ -111,8 +111,10 @@ export default function Signup() {
   return (
     <div className="space-y-6 p-6">
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-bold text-800">Crea tu cuenta</h1>
-        <p className="text-sm text-500">
+        <h1 className="text-2xl font-bold text-hero">
+          Crea tu cuenta
+        </h1>
+        <p className="text-sm text-second">
           Ingresa tus datos para crear tu cuenta en Cardora.
         </p>
       </div>
@@ -127,7 +129,10 @@ export default function Signup() {
 
         {/* Email + botón enviar código */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-sm font-medium text-700">
+          <label
+            htmlFor="email"
+            className="text-sm font-medium text-label"
+          >
             Email
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -138,7 +143,7 @@ export default function Signup() {
               value={email}
               onChange={handleEmailChange}
               placeholder="correo@ejemplo.com"
-              className="flex-1 min-w-0 px-3 py-2 rounded-lg border-200 bg-50 text-sm text-800 placeholder-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition duration-200"
+              className="input-base flex-1 min-w-0 border-surface"
             />
             <button
               type="button"
@@ -201,7 +206,10 @@ export default function Signup() {
               text-red-700 bg-red-50 border border-red-200
               dark:text-red-300 dark:bg-red-900/20 dark:border-red-800/40"
           >
-            <Icon icon="mdi:alert-circle" className="mt-0.5 shrink-0 text-base" />
+            <Icon
+              icon="mdi:alert-circle"
+              className="mt-0.5 shrink-0 text-base"
+            />
             <span>{error}</span>
           </div>
         )}
@@ -222,7 +230,7 @@ export default function Signup() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-500">
+      <p className="text-center text-sm text-second">
         ¿Ya tienes cuenta?{" "}
         <Link to="/login" className="text-aurora font-semibold hover:underline">
           Inicia sesión

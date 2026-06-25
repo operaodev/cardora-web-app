@@ -6,6 +6,7 @@ import Signup from "./pages/Singup";
 import Login from "./pages/Login";
 import Guest from "./pages/Guest";
 import UpgradeGuest from "./pages/UpgradeGuest";
+import Marketplace from "./pages/Marketplace";
 
 function App() {
   return (
@@ -16,10 +17,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/guest" element={<Guest />} />
           <Route path="/guest/verify" element={<UpgradeGuest />} />
-          
         </Route>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/marketplace" element={<Marketplace />} />
         </Route>
       </Routes>
     </BrowserRouter>

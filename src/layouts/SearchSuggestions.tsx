@@ -5,7 +5,7 @@ import { Icon } from "@iconify-icon/react";
 import { useEffect, useRef, useState } from "react";
 import { PopoverRef } from "../components/modal/Popover";
 import type { SuggestionDTO, SuggestionInput } from "@/types/suggestion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSuggestions } from "@/hooks/useSuggestions";
 
 const GAME_OPTIONS: { value: TCG; label: string }[] = [
@@ -28,6 +28,7 @@ const LANGUAGE_OPTIONS: { value: LangCode; label: string }[] = [
 ];
 
 export default function SearchSuggestions() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [game, setGame] = useState<TCG>("");
   const [lang, setLang] = useState<LangCode>("");
@@ -80,15 +81,26 @@ export default function SearchSuggestions() {
     : "Buscar…";
 
   return (
-    <div
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (search.trim()) {
+          const params = new URLSearchParams();
+          params.set("q", search.trim());
+          if (lang.trim()) params.set("lang", lang.trim());
+          if (game.trim()) params.set("game", game.trim());
+
+          navigate(`marketplace?${params.toString()}`);
+          setShowSuggestions(false);
+        }
+      }}
       className="
         relative flex items-center
         gap-2 px-3 py-1.5 rounded-lg
-        bg-gray-50 border border-gray-200 focus-within:border-gray-400 transition-colors
-        dark:bg-gray-800 dark:border-gray-600 dark:focus-within:border-gray-500
+        bg-muted border border-surface focus-within:border-strong transition-colors
       "
     >
-      <Icon icon="material-symbols:search" className="text-400 shrink-0" />
+      <Icon icon="material-symbols:search" className="text-subtle shrink-0" />
       <input
         onFocus={() => setShowSuggestions(true)}
         onBlur={() => setShowSuggestions(false)}
@@ -99,30 +111,30 @@ export default function SearchSuggestions() {
         onChange={(e) => setSearch(e.target.value)}
         className="
           flex-1 truncate bg-transparent outline-none
-          text-700 placeholder-400
+          text-label placeholder:text-subtle
         "
       />
       {shouldShow && (
         <div
           className="
-          absolute left-0 right-0 top-full z-50 mt-1
-          surface rounded-xl shadow-lg border border-gray-200 dark:border-gray-700
-          flex flex-col divide-y divide-gray-200 dark:divide-gray-700
+          overflow-hidden absolute left-0 right-0 top-full z-50 mt-1
+          surface rounded-xl shadow-lg border border-surface
+          flex flex-col
           "
         >
           {isFetching ? (
             <div className="px-5 py-6 flex flex-col items-center gap-2">
-              <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin dark:border-gray-600 dark:border-t-gray-300" />
-              <span className="text-sm text-400">Buscando...</span>
+              <div className="w-5 h-5 border-2 border-raised border-t-strong rounded-full animate-spin" />
+              <span className="text-sm text-subtle">Buscando...</span>
             </div>
           ) : hasResults && suggestions ? (
-            <div className="max-h-72 overflow-y-auto custom-scrollbar">
+            <div className="max-h-72 overflow-y-auto custom-scrollbar divide-y divide-gray-200 dark:divide-gray-700">
               {suggestions.map((s) => (
                 <SuggestionRow key={s.id} suggestion={s} />
               ))}
             </div>
           ) : (
-            <div className="px-5 py-6 text-center text-sm text-400">
+            <div className="px-5 py-6 text-center text-sm text-subtle">
               No se encontraron resultados
             </div>
           )}
@@ -138,10 +150,10 @@ export default function SearchSuggestions() {
           if (e.key === "Enter" || e.key === " ") setShowGames(true);
         }}
         className="
-          uppercase cursor-pointer select-none rounded-md px-1.5 py-0.5 text-xs font-medium
-          text-500
-          focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
-        "
+        uppercase cursor-pointer select-none rounded-md px-1.5 py-0.5 text-xs font-medium
+        text-second
+        focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+      "
       >
         {game || "ALL"}
       </span>
@@ -156,9 +168,7 @@ export default function SearchSuggestions() {
             <button
               key={option.value}
               className={`popover-option ${
-                game === option.value
-                  ? "bg-gray-100 dark:bg-gray-700 font-semibold"
-                  : ""
+                game === option.value ? "bg-raised font-semibold" : ""
               }`}
               onClick={() => {
                 setGame(option.value as TCG);
@@ -184,7 +194,7 @@ export default function SearchSuggestions() {
         }}
         className="
           cursor-pointer select-none rounded-md px-1.5 py-0.5 text-xs font-medium
-          text-500
+          text-second
           focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
         "
       >
@@ -201,9 +211,7 @@ export default function SearchSuggestions() {
             <button
               key={option.value}
               className={`popover-option ${
-                lang === option.value
-                  ? "bg-gray-100 dark:bg-gray-700 font-semibold"
-                  : ""
+                lang === option.value ? "bg-raised font-semibold" : ""
               }`}
               onClick={() => {
                 setLang(option.value as LangCode);
@@ -218,75 +226,68 @@ export default function SearchSuggestions() {
           ))}
         </PopoverRef>
       )}
-    </div>
+    </form>
   );
 }
 
 const SuggestionRow = ({ suggestion }: { suggestion: SuggestionDTO }) => {
-  const hasStock = (suggestion.stock ?? 0) > 0;
-  const hasWishlist = (suggestion.copies_in_wishlist ?? 0) > 0;
+  const {
+    id,
+    type,
+    code,
+    set_region_code,
+    set_name,
+    set_external_id,
+    name,
+    image,
+    rarity,
+    rarity_code,
+  } = suggestion;
+
+  const isSet = type === "set";
 
   return (
     <Link
-      to={`/products/${suggestion.id}`}
-      className="flex items-center gap-4 px-5 py-3
-        border-b border-gray-100 dark:border-gray-700
-        hover:bg-gray-50 dark:hover:bg-gray-700/50
-        transition-colors cursor-pointer"
+      to={`/products/${id}`}
+      className="
+        flex items-center
+        gap-3 px-5 py-3
+        bg-muted-interactive
+        cursor-pointer
+      "
     >
-      {suggestion.image && (
-        <img
-          src={suggestion.image}
-          alt={suggestion.name}
-          className="w-12 h-16 object-contain rounded shrink-0"
-        />
+      {image ? (
+        <img src={image} alt={name} className="w-12 h-16 object-contain" />
+      ) : (
+        <p
+          className="
+              flex items-center w-12 h-16
+              bg-raised pointer-events-none
+              text-xs font-semibold text-subtle text-center
+            "
+        >
+          No image
+        </p>
       )}
-      <div className="flex flex-col min-w-0 gap-1 flex-1">
-        <h3 className="font-semibold text-sm text-800 truncate">
-          {suggestion.name}{" "}
-          <span className="font-normal text-sm text-400">
-            {suggestion.type === "card" &&
-              suggestion.code &&
-              `(${suggestion.code})`}
-            {suggestion.type === "set" &&
-              suggestion.set_code &&
-              `(${suggestion.set_code})`}
+      <div className="flex flex-col min-w-0 gap-1">
+        <h3 className="font-semibold text-sm text-heading truncate">
+          {name}{" "}
+          <span className="font-normal text-xs text-second">
+            {!isSet && code && `(${code})`}
+            {isSet && set_region_code && `(${set_region_code})`}
           </span>
         </h3>
-        {suggestion.rarity && (
-          <p className="text-xs font-semibold text-aurora">
-            {suggestion.rarity}{" "}
-            {suggestion.rarity_code && `(${suggestion.rarity_code})`}
+
+        {rarity && (
+          <p className="text-xs font-bold text-second">
+            {rarity} {rarity_code && `(${rarity_code})`}
           </p>
         )}
-        <span className="text-xs text-400">{suggestion.set_name}</span>
-      </div>
 
-      {/* Badges de stock / wishlist */}
-      {(hasStock || hasWishlist) && (
-        <div className="flex flex-col gap-2 shrink-0">
-          {hasStock && (
-            <span
-              className="badge
-                bg-blue-50 text-blue-600 border border-blue-200
-                dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
-            >
-              <Icon icon="icon-park-solid:stock-market" className="text-sm" />x
-              {suggestion.stock}
-            </span>
-          )}
-          {hasWishlist && (
-            <span
-              className="badge
-                bg-yellow-50 text-yellow-500 border border-yellow-200
-                dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800"
-            >
-              <Icon icon="clarity-favorite-solid" className="text-sm" />x
-              {suggestion.copies_in_wishlist}
-            </span>
-          )}
-        </div>
-      )}
+        <p className="text-xs text-subtle">
+          {isSet ? set_external_id : set_name}
+        </p>
+      </div>
     </Link>
   );
 };

@@ -2,7 +2,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+    @apply bg-white dark:bg-gray-900;
+}
+
 @layer utilities {
+    /* ─── Button ─── */
     .btn-aurora {
         @apply w-full py-2.5 rounded-lg font-semibold text-white
             bg-linear-to-r from-indigo-500 to-fuchsia-500
@@ -15,116 +20,156 @@
     .bevel-full {
         corner-shape: bevel;
     }
+
+    /* ─── Text colors (6 semantic levels) ─── */
+    /* subtle  → texto de apoyo mínimo, placeholders */
+    .text-subtle {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+    /* second  → texto secundario / metadatos */
+    .text-second {
+        @apply text-gray-500 dark:text-gray-400;
+    }
+    /* body    → párrafos y contenido corriente */
+    .text-body {
+        @apply text-gray-600 dark:text-gray-300;
+    }
+    /* label   → etiquetas de formulario, badges */
+    .text-label {
+        @apply text-gray-700 dark:text-gray-200;
+    }
+    /* heading → títulos de sección */
+    .text-heading {
+        @apply text-gray-800 dark:text-gray-100;
+    }
+    /* hero    → h1, texto principal de página */
+    .text-hero {
+        @apply text-gray-900 dark:text-gray-50;
+    }
+
+    /* ─── Background colors — sin hover (para inputs, chips, etc.) ─── */
+    .bg-muted {
+        @apply bg-gray-50 dark:bg-gray-900/60;
+    }
+    .bg-surface {
+        @apply bg-white dark:bg-gray-900;
+    }
+    .bg-raised {
+        @apply bg-gray-100 dark:bg-gray-700;
+    }
+    .bg-prominent {
+        @apply bg-gray-200 dark:bg-gray-600;
+    }
+
+    /* ─── Background colors — con hover lift (para botones, rows) ─── */
+    .bg-muted-interactive {
+        @apply bg-gray-50 dark:bg-gray-900/60
+            hover:bg-gray-100 dark:hover:bg-gray-800/60
+            transition-colors duration-200;
+    }
+    .bg-surface-interactive {
+        @apply bg-white dark:bg-gray-900
+            hover:bg-gray-50 dark:hover:bg-gray-800
+            transition-colors duration-200;
+    }
+    .bg-raised-interactive {
+        @apply bg-gray-100 dark:bg-gray-700
+            hover:bg-gray-200 dark:hover:bg-gray-600
+            transition-colors duration-200;
+    }
+    .bg-prominent-interactive {
+        @apply bg-gray-200 dark:bg-gray-600
+            hover:bg-gray-300 dark:hover:bg-gray-500
+            transition-colors duration-200;
+    }
+
+    /* ─── Border colors (4 semantic levels) ─── */
+    /* muted   → separadores casi invisibles */
+    .border-muted {
+        @apply border-gray-100 dark:border-gray-800;
+    }
+    /* surface → borde de tarjetas/inputs en reposo */
+    .border-surface {
+        @apply border-gray-200 dark:border-gray-700;
+    }
+    /* raised  → borde de elementos elevados */
+    .border-raised {
+        @apply border-gray-300 dark:border-gray-600;
+    }
+    /* strong  → borde de énfasis */
+    .border-strong {
+        @apply border-gray-400 dark:border-gray-500;
+    }
+
+    /* ─── Cards (bg + borde + hover + transition cohesivos) ─── */
+    /*
+     * Jerarquía de profundidad:
+     *   muted    → contenido sobre bg-muted    (gris muy claro / dark muy oscuro)
+     *   surface  → contenido sobre bg-surface   (blanco / dark-900)   ← caso más común
+     *   raised   → contenido sobre bg-raised    (gris-100 / dark-700)
+     *   prominent→ contenido sobre bg-prominent (gris-200 / dark-600)
+     *
+     * Regla: la card siempre es un tono más claro que su contenedor
+     * para que haya contraste visible sin perderse en el fondo.
+     */
+    /* card-muted: sobre fondo bg-muted (gris-50 / dark-900) */
+    .card-muted {
+        @apply bg-white      border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700
+               hover:bg-gray-50  dark:hover:bg-gray-800
+               transition-colors duration-200;
+    }
+    /* card-surface: sobre fondo surface/bg-surface (white / dark-900) */
+    .card-surface {
+        @apply bg-gray-50    border border-gray-200 dark:bg-gray-800   dark:border-gray-700
+               hover:bg-white    dark:hover:bg-gray-700
+               hover:border-indigo-500 dark:hover:border-fuchsia-500
+               transition-colors duration-200;
+    }
+    /* card-raised: sobre fondo bg-raised (gray-100 / dark-700) */
+    .card-raised {
+        @apply bg-gray-100   border border-gray-300 dark:bg-gray-700   dark:border-gray-600
+               hover:bg-gray-200 dark:hover:bg-gray-600
+               transition-colors duration-200;
+    }
+    /* card-prominent: sobre fondo bg-prominent (gray-200 / dark-600) */
+    .card-prominent {
+        @apply bg-gray-200   border border-gray-400 dark:bg-gray-600   dark:border-gray-500
+               hover:bg-gray-300 dark:hover:bg-gray-500
+               transition-colors duration-200;
+    }
+
+    /* ─── Composition helpers ─── */
+    /* surface: fondo base de página / panel */
+    .surface {
+        @apply bg-white dark:bg-gray-900;
+    }
+    /* popover-option: fila de menú/popover */
     .popover-option {
         @apply flex items-center text-sm
-            px-4 py-2 gap-3 rounded-lg
-            text-gray-500 font-medium
-            transition duration-200
-            hover:bg-gray-100 hover:text-gray-800
+            px-4 py-2 gap-3 rounded-lg font-medium
+            text-gray-700 dark:text-gray-200
+            bg-white dark:bg-gray-900
+            hover:bg-gray-100 dark:hover:bg-gray-800
+            hover:text-gray-800 dark:hover:text-gray-100
             disabled:opacity-50 disabled:cursor-not-allowed
-            dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+            transition duration-200;
     }
-    .surface {
-        @apply bg-white dark:bg-gray-800 dark:text-gray-100;
-    }
+    /* badge: etiqueta pequeña en línea */
     .badge {
         @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full;
     }
-    .text-50 {
-        @apply text-gray-50  dark:text-gray-900;
-    }
-    .text-100 {
-        @apply text-gray-100 dark:text-gray-800;
-    }
-    .text-200 {
-        @apply text-gray-200 dark:text-gray-700;
-    }
-    .text-300 {
-        @apply text-gray-300 dark:text-gray-600;
-    }
-    .text-400 {
-        @apply text-gray-400 dark:text-gray-500;
-    }
-    .text-500 {
-        @apply text-gray-500 dark:text-gray-400;
-    }
-    .text-600 {
-        @apply text-gray-600 dark:text-gray-300;
-    }
-    .text-700 {
-        @apply text-gray-700 dark:text-gray-200;
-    }
-    .text-800 {
-        @apply text-gray-800 dark:text-gray-100;
-    }
-    .text-900 {
-        @apply text-gray-900 dark:text-gray-50;
-    }
-    .border-50 {
-        @apply border border-gray-50  dark:border-gray-900;
-    }
-    .border-100 {
-        @apply border border-gray-100 dark:border-gray-800;
-    }
-    .border-200 {
-        @apply border border-gray-200 dark:border-gray-700;
-    }
-    .border-300 {
-        @apply border border-gray-300 dark:border-gray-600;
-    }
-    .border-400 {
-        @apply border border-gray-400 dark:border-gray-500;
-    }
-    .border-500 {
-        @apply border border-gray-500 dark:border-gray-400;
-    }
-    .border-600 {
-        @apply border border-gray-600 dark:border-gray-300;
-    }
-    .border-700 {
-        @apply border border-gray-700 dark:border-gray-200;
-    }
-    .border-800 {
-        @apply border border-gray-800 dark:border-gray-100;
-    }
-    .border-900 {
-        @apply border border-gray-900 dark:border-gray-50;
+    /* input-base: campo de formulario estándar */
+    .input-base {
+        @apply px-3 py-2 rounded-lg
+            bg-gray-50 dark:bg-gray-900/60
+            border border-gray-200 dark:border-gray-700
+            text-sm text-gray-800 dark:text-gray-100
+            placeholder:text-gray-400 dark:placeholder:text-gray-500
+            focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
+            transition duration-200;
     }
 
-    .bg-50 {
-        @apply bg-gray-50  dark:bg-gray-900;
-    }
-    .bg-100 {
-        @apply bg-gray-100 dark:bg-gray-800;
-    }
-    .bg-200 {
-        @apply bg-gray-200 dark:bg-gray-700;
-    }
-    .bg-300 {
-        @apply bg-gray-300 dark:bg-gray-600;
-    }
-    .bg-400 {
-        @apply bg-gray-400 dark:bg-gray-500;
-    }
-    .bg-500 {
-        @apply bg-gray-500 dark:bg-gray-400;
-    }
-    .bg-600 {
-        @apply bg-gray-600 dark:bg-gray-300;
-    }
-    .bg-700 {
-        @apply bg-gray-700 dark:bg-gray-200;
-    }
-    .bg-800 {
-        @apply bg-gray-800 dark:bg-gray-100;
-    }
-    .bg-900 {
-        @apply bg-gray-900 dark:bg-gray-50;
-    }
-    .bg-white {
-        @apply bg-white dark:bg-gray-800;
-    }
-
+    /* ─── Placeholder animation ─── */
     .animate-placeholder-fade::placeholder {
         animation: placeholder-fade 0.4s ease-out;
     }
