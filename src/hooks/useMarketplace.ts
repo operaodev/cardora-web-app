@@ -73,17 +73,23 @@ export function useMarketCards(input: FilterInput | null) {
   });
 }
 
-// Stable filter key without page so all pages share the same cache entry
-type InfiniteFilterInput = Omit<FilterInput, "page">;
-
-export function useInfiniteMarketCards(input: InfiniteFilterInput | null) {
+// Stable filter key without page so all pages share the same cache entry.
+// When page is set it acts as initialPageParam (for jump-to-page behaviour).
+export function useInfiniteMarketCards(input: FilterInput | null) {
+  const initialPage = input?.page ?? 1;
+  // Exclude page from the filter body sent to the API (controlled via pageParam),
+  // but keep it in the query key so a page jump busts the cache.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { page: _page, ...filterBody } = (input ?? {}) as FilterInput;
   return useInfiniteQuery({
-    queryKey: [MARKETPLACE_KEY, "cards", "infinite", input],
-    queryFn: ({ pageParam = 1 }) =>
-      fetchMarketCards({ ...input!, page: pageParam as number }),
+    queryKey: [MARKETPLACE_KEY, "cards", "infinite", filterBody, initialPage],
+    queryFn: ({ pageParam = initialPage }) =>
+      fetchMarketCards({ ...filterBody, page: pageParam as number }),
     getNextPageParam: (lastPage) =>
       lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
-    initialPageParam: 1,
+    getPreviousPageParam: (firstPage) =>
+      firstPage.page > 1 ? firstPage.page - 1 : undefined,
+    initialPageParam: initialPage,
     enabled: input != null,
     retry: false,
   });
