@@ -64,7 +64,7 @@ export const PopoverRef = ({
           ...style,
         }}
         className={`
-          rounded-xl shadow-lg border-surface
+          rounded-xl shadow-lg border border-surface
           surface
           ${className}
         `}
@@ -135,7 +135,7 @@ export const Popover = ({
         }}
         className={`
           rounded-xl shadow-lg border-surface
-          surface text-heading
+          surface border text-heading
           ${className}
         `}
       >

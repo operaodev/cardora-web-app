@@ -210,7 +210,7 @@ export default function Marketplace() {
   }
 
   return (
-    <main className="surface min-h-screen py-5">
+    <main className="surface min-h-screen py-1">
       <div className="mx-auto w-11/12 grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* ── Top sentinel (above all content) ── */}
         <div
