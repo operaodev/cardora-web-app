@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import { AuthFormField } from "@/layouts/AuthLayout";
+import { AuthError, AuthFormField, AuthHead } from "@/layouts/AuthLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify-icon/react";
 import { useEffect, useState, useRef } from "react";
@@ -110,14 +110,10 @@ export default function UpgradeGuest() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="text-center space-y-1">
-        <h1 className="text-2xl font-bold text-hero">
-          Oficializa tu cuenta
-        </h1>
-        <p className="text-sm text-second">
-          Guarda tu progreso permanentemente registrando tu cuenta.
-        </p>
-      </div>
+      <AuthHead
+        title="Oficializa tu cuenta"
+        content="Guarda tu progreso permanentemente registrando tu cuenta."
+      />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthFormField
@@ -129,10 +125,7 @@ export default function UpgradeGuest() {
 
         {/* Email + botón enviar código */}
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor="email"
-            className="text-sm font-medium text-label"
-          >
+          <label htmlFor="email" className="text-sm font-medium text-label">
             Email
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -199,21 +192,8 @@ export default function UpgradeGuest() {
           placeholder="••••••••"
         />
 
-        {error && (
-          <div
-            role="alert"
-            className="flex items-start gap-2 text-sm px-3 py-2.5 rounded-lg
-              text-red-700 bg-red-50 border border-red-200
-              dark:text-red-300 dark:bg-red-900/20 dark:border-red-800/40"
-          >
-            <Icon
-              icon="mdi:alert-circle"
-              className="mt-0.5 shrink-0 text-base"
-            />
-            <span>{error}</span>
-          </div>
-        )}
-
+        <AuthError error={error} />
+        
         <button
           type="submit"
           disabled={loading}

@@ -5,6 +5,7 @@ export interface WishlistItem {
   user_id: string;
   product_id: number;
   quantity: number;
+  notifications: boolean;
   product: Product;
   created_at: string;
   updated_at: string;
@@ -19,4 +20,11 @@ export interface UpsertWishlistInput {
 export interface WishlistUpsertResponse {
   /** Mensaje informativo cuando el item se elimina (cantidad <= 0). */
   message?: string;
+}
+
+export interface WishlistCheckResponse {
+  /** true si la carta está en la wishlist del usuario. */
+  in_wishlist: boolean;
+  /** ID de la entrada en la wishlist (0 si no existe). */
+  wishlist_id: number;
 }

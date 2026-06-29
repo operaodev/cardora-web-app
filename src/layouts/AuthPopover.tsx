@@ -78,18 +78,31 @@ export default function AuthPopover({ open, onClose, anchorRef }: Props) {
       className="w-72 flex flex-col divide-y divide-gray-200 dark:divide-gray-700"
     >
       <div className="p-4">
-        <h4 className="font-medium text-heading">{user?.name}</h4>
-        <p className="text-sm text-body">{user?.email}</p>
+        <h4 className="font-medium text-title">{user?.name}</h4>
+        <p className="text-sm text-content">{user?.email}</p>
       </div>
       <div className="flex flex-col p-4">
-        <Link to="profile" className="popover-option">
+        <Link onClick={onClose} to="profile" className="popover-option">
           <Icon icon="fluent:person-24-filled" className="text-2xl" />
           Mi perfil
         </Link>
-        <button onClick={logout} className="popover-option">
+        <Link onClick={onClose} to="wishlist" className="popover-option">
+          <Icon icon="mdi:star" className="text-2xl" />
+          Lista de deseados
+        </Link>
+      </div>
+      <div className="p-4">
+        <Link
+          onClick={() => {
+            logout();
+            onClose();
+          }}
+          to={"/"}
+          className="w-full popover-option hover:bg-red-100 dark:hover:bg-red-600/40"
+        >
           <Icon icon="mdi:logout" className="text-2xl" />
           Cerrar sesión
-        </button>
+        </Link>
       </div>
     </PopoverRef>
   );

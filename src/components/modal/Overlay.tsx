@@ -38,7 +38,7 @@ export const OverlayTransition = ({
         transition-all duration-300
         ${
           open
-            ? "bg-black/40 backdrop-blur-lg opacity-100 visible"
+            ? "bg-gray-950/60 backdrop-blur-lg opacity-100 visible"
             : "bg-transparent opacity-0 invisible pointer-events-none"
         }
       `}
@@ -66,9 +66,9 @@ export const OverlayTransition = ({
         >
           <button
             className="
-              flex p-3 bg-surface rounded-full shadow-md
-              text-lg text-second
-              border-raised border bevel-full
+              flex p-3 surface-interactive rounded-full
+              text-lg text-content
+              border bevel-full
               transition-colors
             "
             onClick={onClose}
@@ -82,9 +82,8 @@ export const OverlayTransition = ({
           className={`
             flex flex-col flex-1
             h-full
-            surface shadow-xl
+            bg-surface shadow-xl
             transition-transform duration-300
-            text-heading
             ${
               side === "right"
                 ? open

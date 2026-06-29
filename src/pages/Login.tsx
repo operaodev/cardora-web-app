@@ -1,5 +1,10 @@
-import { useNavigate, Link } from "react-router-dom";
-import { AuthFormField } from "@/layouts/AuthLayout";
+import { useNavigate } from "react-router-dom";
+import {
+  AuthError,
+  AuthFooter,
+  AuthFormField,
+  AuthHead,
+} from "@/layouts/AuthLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify-icon/react";
 import { useState } from "react";
@@ -45,14 +50,10 @@ export default function Login() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="text-center space-y-1">
-        <h1 className="text-2xl font-bold text-hero">
-          Iniciar sesión
-        </h1>
-        <p className="text-sm text-second">
-          Ingresa tus credenciales para acceder a tu cuenta.
-        </p>
-      </div>
+      <AuthHead
+        title="Iniciar sesión"
+        content="Ingresa tus credenciales para acceder a tu cuenta."
+      />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthFormField
@@ -70,20 +71,7 @@ export default function Login() {
           onChange={clearError}
         />
 
-        {displayError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2 text-sm px-3 py-2.5 rounded-lg
-              text-red-700 bg-red-50 border border-red-200
-              dark:text-red-300 dark:bg-red-900/20 dark:border-red-800/40"
-          >
-            <Icon
-              icon="mdi:alert-circle"
-              className="mt-0.5 shrink-0 text-base"
-            />
-            <span>{displayError}</span>
-          </div>
-        )}
+        <AuthError error={displayError} />
 
         <button
           type="submit"
@@ -101,15 +89,11 @@ export default function Login() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-second">
-        ¿No tienes cuenta?{" "}
-        <Link
-          to="/signup"
-          className="text-aurora font-semibold hover:underline"
-        >
-          Regístrate
-        </Link>
-      </p>
+      <AuthFooter
+        message="¿No tienes cuenta?"
+        to="/signup"
+        anchor="Registrate aquí"
+      />
     </div>
   );
 }

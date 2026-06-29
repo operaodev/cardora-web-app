@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "@/stores/useUserStore";
 import AuthPopover from "./AuthPopover";
 import SearchSuggestions from "@/layouts/SearchSuggestions";
+import { useScrollHide } from "@/components/hooks/useScrollHide";
 
 const NAV_ITEMS = [
   {
@@ -22,7 +23,7 @@ const NAV_ITEMS = [
   {
     title: "Mis cartas",
     icon: "game-icons:card-pick",
-    route: "/inventory",
+    route: "/inventory/me",
     disabled: true,
   },
 ];
@@ -40,8 +41,42 @@ export default function LayoutMobile() {
   const { isAuthenticated } = useUserStore();
   const navigate = useNavigate();
 
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  // Active input detection for inhibit condition
+  const [inputFocused, setInputFocused] = useState(false);
+
+  const inhibit = showMenu || showAuth || inputFocused;
+  const { hidden } = useScrollHide({ inhibit });
+
+  // Track input focus for inhibit
+  useEffect(() => {
+    const handleFocus = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "SELECT" ||
+        target.tagName === "TEXTAREA"
+      ) {
+        setInputFocused(true);
+      }
+    };
+    const handleBlur = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "SELECT" ||
+        target.tagName === "TEXTAREA"
+      ) {
+        setInputFocused(false);
+      }
+    };
+
+    document.addEventListener("focus", handleFocus, true);
+    document.addEventListener("blur", handleBlur, true);
+    return () => {
+      document.removeEventListener("focus", handleFocus, true);
+      document.removeEventListener("blur", handleBlur, true);
+    };
+  }, []);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -53,56 +88,13 @@ export default function LayoutMobile() {
     }
   }, []);
 
-  useEffect(() => {
-    const handle = () => {
-      const y = window.scrollY;
-
-      // Evitar ocultar si el menú lateral, popover de auth o el input del buscador tienen interacción activa/foco
-      const activeEl = document.activeElement;
-      const isInputFocused =
-        activeEl &&
-        (activeEl.tagName === "INPUT" ||
-          activeEl.tagName === "SELECT" ||
-          activeEl.tagName === "TEXTAREA");
-
-      if (showMenu || showAuth || isInputFocused) {
-        setHidden(false);
-        lastY.current = y;
-        return;
-      }
-
-      // Si está muy cerca del tope superior, mantenerlo siempre visible
-      if (y < 40) {
-        setHidden(false);
-        lastY.current = y;
-        return;
-      }
-
-      const delta = y - lastY.current;
-
-      // Umbral mínimo de scroll (10px) para evitar saltos y vibraciones
-      if (Math.abs(delta) < 10) return;
-
-      if (delta > 0 && y > 80) {
-        setHidden(true);
-      } else if (delta < 0) {
-        setHidden(false);
-      }
-
-      lastY.current = y;
-    };
-    window.addEventListener("scroll", handle, { passive: true });
-    return () => window.removeEventListener("scroll", handle);
-  }, [showMenu, showAuth]);
-
   return (
     <div
       className={`
         sticky z-50 top-0
         flex flex-col
         w-full py-2 px-3 gap-2
-        border-b border-surface
-        surface
+        bg-surface border-b border-surface
         transition-transform duration-300
         ${hidden ? "-translate-y-full" : "translate-y-0"}
       `}
@@ -154,8 +146,7 @@ export default function LayoutMobile() {
           onClick={() => setShowAuth(true)}
           className="
             flex items-center justify-center
-            text-second hover:text-label
-            transition duration-200
+            icon-interactive
           "
         >
           <Icon icon="mingcute:user-4-fill" height={33} />
@@ -164,14 +155,11 @@ export default function LayoutMobile() {
         <button
           onClick={() => setShowMenu(true)}
           className="
-            flex items-center justify-center w-7 h-7
-            border-raised rounded-md
-            text-second text-lg
-            bg-raised
-            transition duration-200
+            flex items-center justify-center
+            icon-interactive
           "
         >
-          <Icon icon="material-symbols:menu" />
+          <Icon icon="material-symbols:menu" height={33} />
         </button>
       </div>
 

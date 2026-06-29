@@ -1,74 +1,45 @@
 import { Icon } from "@iconify-icon/react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { AuthFooter } from "@/layouts/AuthLayout";
 
 export default function Guest() {
-  const { registerGuest } = useAuth();
+  const { registerGuest, user } = useAuth();
+
+  if (user) return <Navigate to={"/"} />;
 
   return (
     <div className="text-center space-y-6 p-6">
       <Icon
         icon="fluent:guest-24-filled"
-        className="text-indigo-500 dark:text-indigo-400 mx-auto text-[7rem]"
+        className="text-special mx-auto text-[7rem]"
       />
 
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-hero">
-          Modo invitado
-        </h1>
-        <p className="text-sm text-second max-w-xs mx-auto leading-relaxed">
+        <h1 className="text-3xl font-bold text-title">Modo invitado</h1>
+        <p className="text-sm text-content max-w-xs mx-auto leading-relaxed">
           Explora Cardora sin registro. Puedes buscar cartas, armar tu colección
           y usar todas las funciones de inventario.
         </p>
       </div>
 
-      <ul className="text-left text-sm text-body space-y-3 bg-muted rounded-xl p-5 border-surface">
-        <li className="flex gap-3">
-          <Icon
-            icon="fluent:checkmark-circle-24-filled"
-            className="text-indigo-500 dark:text-indigo-400 text-lg shrink-0 mt-px"
-          />
-          <span className="text-heading">
-            Acceso completo a búsqueda y catálogo
-          </span>
-        </li>
-        <li className="flex gap-3">
-          <Icon
-            icon="fluent:checkmark-circle-24-filled"
-            className="text-indigo-500 dark:text-indigo-400 text-lg shrink-0 mt-px"
-          />
-          <span className="text-heading">
-            Puedes registrar tus cartas y gestionar tu stock
-          </span>
-        </li>
-        <li className="flex gap-3">
-          <Icon
-            icon="fluent:dismiss-circle-24-filled"
-            className="text-gray-300 dark:text-gray-600 text-lg shrink-0 mt-px"
-          />
-          <span className="text-subtle">
-            Tus cartas no serán visibles para otros usuarios
-          </span>
-        </li>
-        <li className="flex gap-3">
-          <Icon
-            icon="fluent:dismiss-circle-24-filled"
-            className="text-gray-300 dark:text-gray-600 text-lg shrink-0 mt-px"
-          />
-          <span className="text-subtle">
-            Tus ofertas no aparecerán en el marketplace
-          </span>
-        </li>
-        <li className="flex gap-3">
-          <Icon
-            icon="fluent:info-24-filled"
-            className="text-indigo-500 dark:text-indigo-400 text-lg shrink-0 mt-px"
-          />
-          <span className="text-heading">
-            Puedes convertir tu cuenta a oficial en cualquier momento y
-            conservarás todos tus datos.
-          </span>
-        </li>
+      <ul className="text-left text-sm text-label space-y-3 bg-muted rounded-xl p-5 border-surface">
+        <Point content="Acceso completo a búsqueda y catálogo" />
+        <Point content="Puedes registrar tus cartas y gestionar tu stock" />
+        <Point
+          type="restricted"
+          content="Tus cartas no serán visibles para otros usuarios"
+        />
+        <Point
+          type="restricted"
+          content="Tus ofertas no aparecerán en el marketplace"
+        />
+        <Point
+          type="info"
+          content={
+            "Puedes convertir tu cuenta a oficial en cualquier momento y conservarás todos tus datos."
+          }
+        />
       </ul>
 
       <Link
@@ -79,15 +50,43 @@ export default function Guest() {
         Ingresar como invitado
       </Link>
 
-      <p className="text-center text-sm text-second">
-        ¿Quieres guardar todo tu progreso?{" "}
-        <Link
-          to="/signup"
-          className="text-aurora font-semibold hover:underline"
-        >
-          Regístrate aquí
-        </Link>
-      </p>
+      <AuthFooter
+        message="¿Quieres guardar todo tu progreso?"
+        to="/signup"
+        anchor="Registrate aquí"
+      />
     </div>
   );
 }
+
+interface Props {
+  content: string;
+  type?: "info" | "restricted" | "permitted";
+}
+
+const Point = ({ content, type = "permitted" }: Props) => {
+  return (
+    <li className="flex gap-3">
+      <Icon
+        icon={
+          type === "info"
+            ? "fluent:info-24-filled"
+            : type === "restricted"
+              ? "fluent:dismiss-circle-24-filled"
+              : "fluent:checkmark-circle-24-filled"
+        }
+        className={`
+            text-lg shrink-0 mt-px
+            ${
+              type !== "restricted"
+                ? "text-special"
+                : "text-gray-300 dark:text-gray-600"
+            }
+          `}
+      />
+      <span className={type !== "restricted" ? "text-label" : "text-subtle"}>
+        {content}
+      </span>
+    </li>
+  );
+};

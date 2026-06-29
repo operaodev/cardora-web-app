@@ -1,12 +1,13 @@
+import { Icon } from "@iconify-icon/react";
 import { Link, Outlet } from "react-router-dom";
 
 export default function AuthLayout() {
   return (
-    <main className="bg-prominent min-h-screen flex flex-col justify-center items-center gap-3 px-4 py-8">
+    <main className="min-h-screen flex flex-col justify-center items-center gap-3 px-4 py-8">
       <Link className="text-aurora font-bold text-2xl" to="/">
         Cardora
       </Link>
-      <div className="w-full max-w-md border-surface rounded-xl surface shadow-sm">
+      <div className="w-full max-w-md border-surface rounded-xl bg-surface shadow-md shadow-surface">
         <Outlet />
       </div>
     </main>
@@ -54,6 +55,54 @@ export const AuthFormField = ({
       {error && (
         <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">{error}</p>
       )}
+    </div>
+  );
+};
+
+interface AuthFooterProps {
+  message: string;
+  anchor: string;
+  to: string;
+}
+
+export const AuthFooter = ({ message, anchor, to }: AuthFooterProps) => {
+  return (
+    <p className="text-center text-sm text-content">
+      {message}
+      <Link to={to} className="ml-2 text-aurora font-semibold hover:underline">
+        {anchor}
+      </Link>
+    </p>
+  );
+};
+
+export const AuthError = ({ error }: { error: string | null }) => {
+  if (!error) return null;
+
+  return (
+    <div
+      role="alert"
+      className="flex items-start gap-2 text-sm px-3 py-2.5 rounded-lg
+        text-red-700 bg-red-50 border border-red-200
+        dark:text-red-300 dark:bg-red-800/20 dark:border-red-800/40"
+    >
+      <Icon icon="mdi:alert-circle" className="mt-0.5 shrink-0 text-base" />
+      <span>{error}</span>
+    </div>
+  );
+};
+
+export const AuthHead = ({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) => {
+  return (
+    <div className="text-center space-y-1">
+      <h1 className="text-2xl font-bold text-title">{title}</h1>
+      <p className="text-sm text-content">{content}</p>
     </div>
   );
 };

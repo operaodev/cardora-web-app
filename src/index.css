@@ -2,177 +2,166 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
+body,
+main {
+    @apply bg-gray-100 dark:bg-gray-950;
+}
+
+@utility bg-muted {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+@utility bg-raised {
+    @apply bg-gray-300 dark:bg-gray-700;
+}
+
+@utility bg-base {
+    @apply bg-gray-200 dark:bg-gray-800;
+}
+
+@utility surface-interactive {
+    @apply bg-surface border-surface
+        hover:bg-gray-300 dark:hover:bg-gray-700
+        transition-colors duration-200;
+}
+
+@utility bg-surface {
     @apply bg-white dark:bg-gray-900;
 }
 
-@layer utilities {
-    /* ─── Button ─── */
-    .btn-aurora {
-        @apply w-full py-2.5 rounded-lg font-semibold text-white
-            bg-linear-to-r from-indigo-500 to-fuchsia-500
-            hover:from-indigo-600 hover:to-fuchsia-600
-            transition duration-200;
-    }
-    .text-aurora {
-        @apply bg-clip-text text-transparent bg-linear-to-r from-indigo-500 to-fuchsia-500;
-    }
-    .bevel-full {
-        corner-shape: bevel;
+@utility border-surface {
+    @apply border-gray-300 dark:border-gray-700;
+}
+
+@utility shadow-surface {
+    @apply shadow-gray-300 dark:shadow-gray-800/90;
+}
+
+@utility card-surface {
+    @apply border-surface bg-surface
+            shadow-md shadow-gray-300 dark:shadow-gray-900 border
+            hover:bg-linear-to-tr from-fuchsia-200 via-indigo-100 to-80% to-white
+            dark:from-fuchsia-950 dark:via-indigo-950 dark:to-gray-900
+           hover:border-indigo-500 dark:hover:border-fuchsia-500
+           hover:scale-102
+           transition-transform duration-200;
+}
+
+@utility popover-option {
+    @apply flex items-center text-sm
+        px-4 py-2 gap-3 rounded-lg font-medium
+        text-gray-800 dark:text-gray-200
+        hover:bg-gray-200 dark:hover:bg-gray-700
+        disabled:opacity-50 disabled:cursor-not-allowed
+        transition-colors duration-200;
+}
+
+@utility text-label {
+    @apply text-gray-700 dark:text-gray-200;
+}
+
+@utility bg-tag {
+    @apply bg-gray-500 dark:bg-gray-400;
+}
+
+@utility text-title {
+    @apply text-gray-950 dark:text-white;
+}
+
+@utility text-content {
+    @apply text-gray-500 dark:text-gray-400;
+}
+
+@utility text-high {
+    @apply text-gray-800 dark:text-gray-100;
+}
+
+@utility text-tag {
+    @apply text-gray-100 dark:text-gray-900;
+}
+
+@utility text-subtle {
+    @apply text-gray-400 dark:text-gray-500;
+}
+
+@utility icon-interactive {
+    @apply text-gray-500 dark:text-gray-400
+        hover:text-gray-700 dark:hover:text-gray-200
+        transition duration-200;
+}
+
+@utility scrollbar-surface {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray-400) transparent;
+
+    &::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
     }
 
-    /* ─── Text colors (6 semantic levels) ─── */
-    /* subtle  → texto de apoyo mínimo, placeholders */
-    .text-subtle {
-        @apply text-gray-400 dark:text-gray-500;
-    }
-    /* second  → texto secundario / metadatos */
-    .text-second {
-        @apply text-gray-500 dark:text-gray-400;
-    }
-    /* body    → párrafos y contenido corriente */
-    .text-body {
-        @apply text-gray-600 dark:text-gray-300;
-    }
-    /* label   → etiquetas de formulario, badges */
-    .text-label {
-        @apply text-gray-700 dark:text-gray-200;
-    }
-    /* heading → títulos de sección */
-    .text-heading {
-        @apply text-gray-800 dark:text-gray-100;
-    }
-    /* hero    → h1, texto principal de página */
-    .text-hero {
-        @apply text-gray-900 dark:text-gray-50;
+    &::-webkit-scrollbar-track {
+        background: transparent;
     }
 
-    /* ─── Background colors — sin hover (para inputs, chips, etc.) ─── */
-    .bg-muted {
-        @apply bg-gray-50 dark:bg-gray-900/60;
-    }
-    .bg-surface {
-        @apply bg-white dark:bg-gray-900;
-    }
-    .bg-raised {
-        @apply bg-gray-100 dark:bg-gray-700;
-    }
-    .bg-prominent {
-        @apply bg-gray-200 dark:bg-gray-600;
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--color-gray-400);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: background-color 200ms;
     }
 
-    /* ─── Background colors — con hover lift (para botones, rows) ─── */
-    .bg-muted-interactive {
-        @apply bg-gray-50 dark:bg-gray-900/60
-            hover:bg-gray-100 dark:hover:bg-gray-800/60
-            transition-colors duration-200;
-    }
-    .bg-surface-interactive {
-        @apply bg-white dark:bg-gray-900
-            hover:bg-gray-50 dark:hover:bg-gray-800
-            transition-colors duration-200;
-    }
-    .bg-raised-interactive {
-        @apply bg-gray-100 dark:bg-gray-700
-            hover:bg-gray-200 dark:hover:bg-gray-600
-            transition-colors duration-200;
-    }
-    .bg-prominent-interactive {
-        @apply bg-gray-200 dark:bg-gray-600
-            hover:bg-gray-300 dark:hover:bg-gray-500
-            transition-colors duration-200;
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-gray-500);
     }
 
-    /* ─── Border colors (4 semantic levels) ─── */
-    /* muted   → separadores casi invisibles */
-    .border-muted {
-        @apply border-gray-100 dark:border-gray-800;
-    }
-    /* surface → borde de tarjetas/inputs en reposo */
-    .border-surface {
-        @apply border-gray-200 dark:border-gray-700;
-    }
-    /* raised  → borde de elementos elevados */
-    .border-raised {
-        @apply border-gray-300 dark:border-gray-600;
-    }
-    /* strong  → borde de énfasis */
-    .border-strong {
-        @apply border-gray-400 dark:border-gray-500;
+    &::-webkit-scrollbar-corner {
+        background: transparent;
     }
 
-    /* ─── Cards (bg + borde + hover + transition cohesivos) ─── */
-    /*
-     * Jerarquía de profundidad:
-     *   muted    → contenido sobre bg-muted    (gris muy claro / dark muy oscuro)
-     *   surface  → contenido sobre bg-surface   (blanco / dark-900)   ← caso más común
-     *   raised   → contenido sobre bg-raised    (gris-100 / dark-700)
-     *   prominent→ contenido sobre bg-prominent (gris-200 / dark-600)
-     *
-     * Regla: la card siempre es un tono más claro que su contenedor
-     * para que haya contraste visible sin perderse en el fondo.
-     */
-    /* card-muted: sobre fondo bg-muted (gris-50 / dark-900) */
-    .card-muted {
-        @apply bg-white      border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700
-               hover:bg-gray-50  dark:hover:bg-gray-800
-               transition-colors duration-200;
-    }
-    /* card-surface: sobre fondo surface/bg-surface (white / dark-900) */
-    .card-surface {
-        @apply bg-gray-50    border border-gray-200 dark:bg-gray-800   dark:border-gray-700
-               hover:bg-white    dark:hover:bg-gray-700
-               hover:border-indigo-500 dark:hover:border-fuchsia-500
-               transition-colors duration-200;
-    }
-    /* card-raised: sobre fondo bg-raised (gray-100 / dark-700) */
-    .card-raised {
-        @apply bg-gray-100   border border-gray-300 dark:bg-gray-700   dark:border-gray-600
-               hover:bg-gray-200 dark:hover:bg-gray-600
-               transition-colors duration-200;
-    }
-    /* card-prominent: sobre fondo bg-prominent (gray-200 / dark-600) */
-    .card-prominent {
-        @apply bg-gray-200   border border-gray-400 dark:bg-gray-600   dark:border-gray-500
-               hover:bg-gray-300 dark:hover:bg-gray-500
-               transition-colors duration-200;
-    }
+    @variant dark {
+        scrollbar-color: var(--color-gray-600) transparent;
 
-    /* ─── Composition helpers ─── */
-    /* surface: fondo base de página / panel */
-    .surface {
-        @apply bg-white dark:bg-gray-900;
-    }
-    /* popover-option: fila de menú/popover */
-    .popover-option {
-        @apply flex items-center text-sm
-            px-4 py-2 gap-3 rounded-lg font-medium
-            text-gray-700 dark:text-gray-200
-            bg-white dark:bg-gray-900
-            hover:bg-gray-100 dark:hover:bg-gray-800
-            hover:text-gray-800 dark:hover:text-gray-100
-            disabled:opacity-50 disabled:cursor-not-allowed
-            transition duration-200;
-    }
-    /* badge: etiqueta pequeña en línea */
-    .badge {
-        @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full;
-    }
-    /* input-base: campo de formulario estándar */
-    .input-base {
-        @apply px-3 py-2 rounded-lg
-            bg-gray-50 dark:bg-gray-900/60
-            border border-gray-200 dark:border-gray-700
-            text-sm text-gray-800 dark:text-gray-100
-            placeholder:text-gray-400 dark:placeholder:text-gray-500
-            focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
-            transition duration-200;
-    }
+        &::-webkit-scrollbar-thumb {
+            background-color: var(--color-gray-600);
+        }
 
-    /* ─── Placeholder animation ─── */
-    .animate-placeholder-fade::placeholder {
-        animation: placeholder-fade 0.4s ease-out;
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: var(--color-gray-500);
+        }
     }
+}
+
+@utility btn-aurora {
+    @apply w-full py-2.5 rounded-lg font-semibold text-white
+        bg-linear-to-r from-indigo-500 to-fuchsia-500
+        hover:from-indigo-600 hover:to-fuchsia-600
+        transition duration-200;
+}
+
+@utility bg-aurora {
+    @apply bg-linear-to-tl from-indigo-500 to-fuchsia-500;
+}
+
+@utility glass-aurora {
+    @apply bg-linear-to-r from-indigo-100 to-fuchsia-100
+        dark:from-indigo-950/80 dark:to-fuchsia-950/80;
+}
+
+@utility text-aurora {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-indigo-500 to-fuchsia-500;
+}
+
+@utility text-special {
+    @apply text-indigo-500 dark:text-fuchsia-500;
+}
+
+@utility bevel-full {
+    corner-shape: bevel;
+}
+
+.animate-placeholder-fade::placeholder {
+    animation: placeholder-fade 0.4s ease-out;
 }
 
 @keyframes placeholder-fade {
@@ -184,4 +173,14 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.input-base {
+    @apply px-3 py-2 rounded-lg
+        bg-gray-50 dark:bg-gray-800
+        border border-gray-200 dark:border-gray-700
+        text-sm text-gray-800 dark:text-gray-100
+        placeholder:text-gray-400 dark:placeholder:text-gray-500
+        focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
+        transition duration-200;
 }

@@ -5,7 +5,7 @@ import { Icon } from "@iconify-icon/react";
 import { useEffect, useRef, useState } from "react";
 import { PopoverRef } from "../components/modal/Popover";
 import type { SuggestionDTO, SuggestionInput } from "@/types/suggestion";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSuggestions } from "@/hooks/useSuggestions";
 
 const GAME_OPTIONS: { value: TCG; label: string }[] = [
@@ -97,7 +97,7 @@ export default function SearchSuggestions() {
       className="
         relative flex items-center
         gap-2 px-3 py-1.5 rounded-lg
-        bg-muted border border-surface focus-within:border-strong transition-colors
+        bg-muted border border-surface transition-colors
       "
     >
       <Icon icon="material-symbols:search" className="text-subtle shrink-0" />
@@ -110,33 +110,35 @@ export default function SearchSuggestions() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="
-          flex-1 truncate bg-transparent outline-none
-          text-label placeholder:text-subtle
+          flex-1 truncate bg-transparent outline-none text-high
+          placeholder:text-gray-400 dark:placeholder:text-gray-500
         "
       />
       {shouldShow && (
         <div
           className="
-          overflow-hidden absolute left-0 right-0 top-full z-50 mt-1
-          surface rounded-xl shadow-lg border border-surface
-          flex flex-col
+            overflow-hidden absolute scrollbar-surface
+            left-0 right-0 top-full z-50 mt-1 max-h-80
+            flex flex-col overflow-y-auto
+            bg-surface border border-surface
+            rounded-xl shadow-lg shadow-surface
+            divide-y divide-gray-300 dark:divide-gray-700
           "
         >
           {isFetching ? (
-            <div className="px-5 py-6 flex flex-col items-center gap-2">
-              <div className="w-5 h-5 border-2 border-raised border-t-strong rounded-full animate-spin" />
-              <span className="text-sm text-subtle">Buscando...</span>
-            </div>
+            <span className="text-sm text-subtle px-5 py-6 text-center">
+              Buscando...
+            </span>
           ) : hasResults && suggestions ? (
-            <div className="max-h-72 overflow-y-auto custom-scrollbar divide-y divide-gray-200 dark:divide-gray-700">
+            <>
               {suggestions.map((s) => (
                 <SuggestionRow key={s.id} suggestion={s} />
               ))}
-            </div>
+            </>
           ) : (
-            <div className="px-5 py-6 text-center text-sm text-subtle">
+            <span className="text-sm text-subtle px-5 py-6 text-center">
               No se encontraron resultados
-            </div>
+            </span>
           )}
         </div>
       )}
@@ -150,10 +152,12 @@ export default function SearchSuggestions() {
           if (e.key === "Enter" || e.key === " ") setShowGames(true);
         }}
         className="
-        uppercase cursor-pointer select-none rounded-md px-1.5 py-0.5 text-xs font-medium
-        text-second
-        focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
-      "
+          uppercase cursor-pointer select-none rounded-md
+          px-1.5 py-0.5 text-xs font-medium
+          text-content
+          focus:outline-none focus:ring-1
+          focus:ring-gray-400 dark:focus:ring-gray-500
+        "
       >
         {game || "ALL"}
       </span>
@@ -193,9 +197,11 @@ export default function SearchSuggestions() {
           if (e.key === "Enter" || e.key === " ") setShowLangs(true);
         }}
         className="
-          cursor-pointer select-none rounded-md px-1.5 py-0.5 text-xs font-medium
-          text-second
-          focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+          cursor-pointer select-none rounded-md
+          px-1.5 py-0.5 text-xs font-medium
+          text-content
+          focus:outline-none focus:ring-1
+          focus:ring-gray-400 dark:focus:ring-gray-500
         "
       >
         {lang || "ALL"}
@@ -231,6 +237,7 @@ export default function SearchSuggestions() {
 }
 
 const SuggestionRow = ({ suggestion }: { suggestion: SuggestionDTO }) => {
+  const navigate = useNavigate();
   const {
     id,
     type,
@@ -247,12 +254,12 @@ const SuggestionRow = ({ suggestion }: { suggestion: SuggestionDTO }) => {
   const isSet = type === "set";
 
   return (
-    <Link
-      to={`/products/${id}`}
+    <div
+      onMouseDown={() => navigate(`/marketplace/${id}`)}
       className="
         flex items-center
         gap-3 px-5 py-3
-        bg-muted-interactive
+        hover:bg-gray-100 dark:hover:bg-gray-800
         cursor-pointer
       "
     >
@@ -270,16 +277,16 @@ const SuggestionRow = ({ suggestion }: { suggestion: SuggestionDTO }) => {
         </p>
       )}
       <div className="flex flex-col min-w-0 gap-1">
-        <h3 className="font-semibold text-sm text-heading truncate">
+        <h3 className="font-semibold text-sm text-title truncate">
           {name}{" "}
-          <span className="font-normal text-xs text-second">
+          <span className="text-xs text-content">
             {!isSet && code && `(${code})`}
             {isSet && set_region_code && `(${set_region_code})`}
           </span>
         </h3>
 
         {rarity && (
-          <p className="text-xs font-bold text-second">
+          <p className="text-xs font-bold text-content">
             {rarity} {rarity_code && `(${rarity_code})`}
           </p>
         )}
@@ -288,6 +295,6 @@ const SuggestionRow = ({ suggestion }: { suggestion: SuggestionDTO }) => {
           {isSet ? set_external_id : set_name}
         </p>
       </div>
-    </Link>
+    </div>
   );
 };

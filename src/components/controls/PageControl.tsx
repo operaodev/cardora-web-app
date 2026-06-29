@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
+import { useScrollHide } from "@/components/hooks/useScrollHide";
 import { Icon } from "@iconify-icon/react";
 import { PopoverRef } from "@/components/modal/Popover";
 
@@ -13,8 +14,6 @@ export interface PageControlProps {
   loadedUpTo: number;
   /** Callback cuando el usuario selecciona una página */
   onPageChange: (page: number) => void;
-  /** Clases adicionales (ej: "fixed bottom-0 w-full") */
-  className?: string;
 }
 
 /**
@@ -35,37 +34,12 @@ export default function PageControl({
   loadedFrom = 1,
   loadedUpTo,
   onPageChange,
-  className = "",
 }: PageControlProps) {
   const isInCache = (page: number) =>
     loadedFrom > 0 && page >= loadedFrom && page <= loadedUpTo;
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  const { hidden } = useScrollHide();
   const [showMorePopover, setShowMorePopover] = useState(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
-
-  // ── Hide / show on scroll ────────────────────────────────────────────────
-  useEffect(() => {
-    const handle = () => {
-      const y = window.scrollY;
-
-      if (y < 40) {
-        setHidden(false);
-        lastY.current = y;
-        return;
-      }
-
-      const delta = y - lastY.current;
-      if (Math.abs(delta) < 10) return;
-
-      if (delta > 0 && y > 80) setHidden(true);
-      else if (delta < 0) setHidden(false);
-
-      lastY.current = y;
-    };
-    window.addEventListener("scroll", handle, { passive: true });
-    return () => window.removeEventListener("scroll", handle);
-  }, []);
 
   // ── Navigation ───────────────────────────────────────────────────────────
   const goToPage = useCallback(
@@ -80,7 +54,6 @@ export default function PageControl({
   const prev = () => goToPage(currentPage - 1);
   const next = () => goToPage(currentPage + 1);
 
-
   // ── Visible page buttons ─────────────────────────────────────────────────
   // Mostramos hasta 5 botones. Si total_pages > 5 el quinto será "..." con popover.
   const MAX_VISIBLE = 5;
@@ -93,7 +66,7 @@ export default function PageControl({
     // Ventana deslizante de 4 alrededor de la actual, la última es el popover
     const half = 2;
     let start = Math.max(1, currentPage - half);
-    let end = Math.min(totalPages - 1, start + 3); // max 4 botones normales
+    const end = Math.min(totalPages - 1, start + 3); // max 4 botones normales
     if (end - start < 3) start = Math.max(1, end - 3);
 
     for (let p = start; p <= end; p++) pagesToShow.push(p);
@@ -111,27 +84,19 @@ export default function PageControl({
   return (
     <div
       className={`
+        fixed bottom-0 left-0 w-full h-14 z-50 px-2
         flex items-center justify-center gap-1
-        surface border-t border-surface shadow-lg
         transition-transform duration-300
         ${hidden ? "translate-y-full" : "translate-y-0"}
-        ${className}
       `}
     >
       {/* ← Prev */}
-      <button
+      <Arrow
         onClick={prev}
         disabled={currentPage <= 1}
-        aria-label="Página anterior"
-        className="
-          flex items-center justify-center w-9 h-9 rounded-lg
-          text-second hover:text-label hover:bg-raised
-          disabled:opacity-30 disabled:cursor-not-allowed
-          transition-colors duration-150
-        "
-      >
-        <Icon icon="mingcute:left-fill" className="text-xl" />
-      </button>
+        arial_label="Página anterior"
+        icon="mingcute:left-fill"
+      />
 
       {/* Page buttons */}
       {pagesToShow.map((page) => (
@@ -139,7 +104,6 @@ export default function PageControl({
           key={page}
           page={page}
           isActive={page === currentPage}
-          isLoaded={isInCache(page)}
           onClick={() => goToPage(page)}
         />
       ))}
@@ -152,9 +116,10 @@ export default function PageControl({
             onClick={() => setShowMorePopover((v) => !v)}
             aria-label="Más páginas"
             className="
-              flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium
-              text-second hover:text-label hover:bg-raised
-              transition-colors duration-150
+              flex items-center justify-center
+              w-9 h-9 rounded-lg text-sm font-bold
+              shadow-md shadow-gray-400 dark:shadow-gray-700
+              text-label surface-interactive border
             "
           >
             <Icon icon="mingcute:more-1-fill" className="text-base" />
@@ -189,52 +154,65 @@ export default function PageControl({
       )}
 
       {/* → Next */}
-      <button
+      <Arrow
         onClick={next}
         disabled={currentPage >= totalPages}
-        aria-label="Página siguiente"
-        className="
-          flex items-center justify-center w-9 h-9 rounded-lg
-          text-second hover:text-label hover:bg-raised
-          disabled:opacity-30 disabled:cursor-not-allowed
-          transition-colors duration-150
-        "
-      >
-        <Icon icon="mingcute:right-fill" className="text-xl" />
-      </button>
+        arial_label="Página siguiente"
+        icon="mingcute:right-fill"
+      />
     </div>
   );
 }
 
-// ── Sub-component ─────────────────────────────────────────────────────────────
+interface ArrowProps {
+  disabled: boolean;
+  onClick: () => void;
+  icon: string;
+  arial_label: string;
+}
+
+const Arrow = ({ disabled, onClick, icon, arial_label }: ArrowProps) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={arial_label}
+      className="
+        flex items-center justify-center w-9 h-9 rounded-lg
+        text-label surface-interactive border
+        disabled:opacity-50 disabled:cursor-not-allowed
+        disabled:pointer-events-none
+      "
+    >
+      <Icon icon={icon} className="text-xl" />
+    </button>
+  );
+};
+
 interface PageButtonProps {
   page: number;
   isActive: boolean;
-  isLoaded: boolean;
   onClick: () => void;
 }
 
-function PageButton({ page, isActive, isLoaded, onClick }: PageButtonProps) {
+function PageButton({ page, isActive, onClick }: PageButtonProps) {
   return (
     <button
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
       className={`
-        relative flex items-center justify-center
-        w-9 h-9 rounded-lg text-sm font-medium
-        transition-colors duration-150
+        flex items-center justify-center
+        w-9 h-9 rounded-lg text-sm font-bold
+        shadow-md shadow-gray-400 dark:shadow-gray-700
         ${
           isActive
             ? "bg-aurora text-white"
-            : "text-second hover:text-label hover:bg-raised"
+            : "text-label surface-interactive border"
         }
+        transition-none
       `}
     >
       {page}
-      {/* Dot indicator: page already loaded */}
-      {isLoaded && !isActive && (
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-second opacity-50" />
-      )}
     </button>
   );
 }
