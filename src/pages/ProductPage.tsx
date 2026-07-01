@@ -7,6 +7,7 @@ import {
   ProductInfo,
   ProductWishlistButton,
 } from "@/components/product/product";
+import { ProductOffers } from "@/components/product/productMarketpalce";
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +60,7 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
     };
 
     return (
-      <main className="mx-auto w-11/12 py-5 space-y-5">
+      <main className="mx-auto w-11/12 pt-5 pb-8 space-y-5">
         <div className="flex gap-2 mb-2.5">
           <ProductWishlistButton productId={id} />
           <h1 className="text-title text-lg font-bold">{name}</h1>
@@ -162,6 +163,8 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
         </details>
 
         {/*<ProductAnalysis product={product} />*/}
+
+        <ProductOffers id={id} name={name} code={code} rarity={rarity} />
       </main>
     );
   }

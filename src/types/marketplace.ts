@@ -10,6 +10,7 @@ export interface OfferUser {
   id: string;
   name: string;
   email_verified: boolean;
+  phone_number?: string;
   created_at: string;
 }
 

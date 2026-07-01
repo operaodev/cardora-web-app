@@ -1,4 +1,5 @@
 import type { Product } from "@/types/product";
+import type { Stock } from "@/types/stock";
 
 export interface WishlistItem {
   id: number;
@@ -27,4 +28,30 @@ export interface WishlistCheckResponse {
   in_wishlist: boolean;
   /** ID de la entrada en la wishlist (0 si no existe). */
   wishlist_id: number;
+}
+
+export type BundleItemType = "gift" | "sale";
+
+export interface BundleItem {
+  id?: number;
+  bundle_id?: number;
+  stock_id: number;
+  quantity: number;
+  type: BundleItemType;
+  stock?: Stock;
+}
+
+export interface Bundle {
+  id: number;
+  user_id: string;
+  items: BundleItem[];
+}
+
+export interface CreateBundleInput {
+  items: BundleItem[];
+}
+
+export interface UpdateBundleInput {
+  bundleId: number;
+  items: BundleItem[];
 }

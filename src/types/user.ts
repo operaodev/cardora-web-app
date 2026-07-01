@@ -4,6 +4,7 @@ export interface User {
   name: string;
   is_guest: boolean;
   email_verified: boolean;
+  phone_number: string;
   created_at: string;
   updated_at: string;
 }
@@ -18,6 +19,7 @@ export interface RegisterInput {
   email: string;
   password: string;
   code: string;
+  phone_number?: string;
 }
 
 export interface AuthResponse {
@@ -35,4 +37,5 @@ export interface UpgradeGuestInput {
   name: string;
   password: string;
   code: string;
+  phone_number?: string;
 }

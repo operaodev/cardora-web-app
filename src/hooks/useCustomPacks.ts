@@ -4,9 +4,13 @@ import type {
   WishlistItem,
   UpsertWishlistInput,
   WishlistCheckResponse,
+  Bundle,
+  CreateBundleInput,
+  UpdateBundleInput,
 } from "@/types/custom_packs";
 
 const WISHLIST_KEY = "wishlist" as const;
+const BUNDLES_KEY = "bundles" as const;
 
 // ── Queries ────────────────────────────────────────────────────────────────
 
@@ -19,6 +23,19 @@ export function useWishlist() {
   return useQuery({
     queryKey: [WISHLIST_KEY],
     queryFn: fetchWishlist,
+    retry: false,
+  });
+}
+
+async function fetchBundles(): Promise<Bundle[]> {
+  const { data } = await apiClient.get<Bundle[]>("/bundles");
+  return data;
+}
+
+export function useBundles() {
+  return useQuery({
+    queryKey: [BUNDLES_KEY],
+    queryFn: fetchBundles,
     retry: false,
   });
 }
@@ -64,6 +81,55 @@ export function useDeleteWishlistItem() {
     mutationFn: deleteWishlistItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [WISHLIST_KEY] });
+    },
+  });
+}
+
+// ── Bundles Mutations ──────────────────────────────────────────────────────
+
+async function createBundle(input: CreateBundleInput): Promise<Bundle> {
+  const { data } = await apiClient.post<Bundle>("/bundles", input);
+  return data;
+}
+
+async function updateBundle({ bundleId, items }: UpdateBundleInput): Promise<Bundle> {
+  const { data } = await apiClient.put<Bundle>(`/bundles/${bundleId}`, { items });
+  return data;
+}
+
+async function deleteBundle(bundleId: number): Promise<void> {
+  await apiClient.delete(`/bundles/${bundleId}`);
+}
+
+export function useCreateBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createBundle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [BUNDLES_KEY] });
+    },
+  });
+}
+
+export function useUpdateBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateBundle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [BUNDLES_KEY] });
+    },
+  });
+}
+
+export function useDeleteBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteBundle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [BUNDLES_KEY] });
     },
   });
 }

@@ -47,7 +47,17 @@ export function useMarketAnalysis(productId: number | null) {
 
 export function useOffers(input: OffersInput | null) {
   return useQuery({
-    queryKey: [MARKETPLACE_KEY, input?.productId, "offers", input],
+    queryKey: [
+      MARKETPLACE_KEY,
+      input?.productId,
+      "offers",
+      input?.forSale,
+      input?.forTrade,
+      input?.hasStock,
+      input?.sortDesc,
+      input?.page,
+      input?.limit,
+    ],
     queryFn: () => fetchOffers(input!),
     enabled: input != null,
     retry: false,

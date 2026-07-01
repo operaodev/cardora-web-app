@@ -3,7 +3,7 @@ import { AuthError, AuthFormField, AuthHead } from "@/layouts/AuthLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify-icon/react";
 import { useEffect, useState, useRef } from "react";
-import type { RegisterInput } from "@/types/user";
+import type { UpgradeGuestInput } from "@/types/user";
 
 const COOLDOWN = 30;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,6 +59,7 @@ export default function UpgradeGuest() {
 
     const form = new FormData(e.currentTarget);
     const name = (form.get("name") as string).trim();
+    const phone = (form.get("phone_number") as string).trim();
     const password = form.get("password") as string;
     const confirm = form.get("confirm_password") as string;
     const code = (form.get("code") as string).trim();
@@ -93,7 +94,13 @@ export default function UpgradeGuest() {
       return;
     }
 
-    const input: RegisterInput = { name, email, password, code };
+    const input: UpgradeGuestInput = {
+      name,
+      email,
+      password,
+      code,
+      ...(phone ? { phone_number: phone } : {}),
+    };
 
     try {
       setIsUpgrading(true);
@@ -121,6 +128,13 @@ export default function UpgradeGuest() {
           type="text"
           name="name"
           placeholder="Tu nombre"
+        />
+
+        <AuthFormField
+          label="Teléfono (opcional)"
+          type="tel"
+          name="phone_number"
+          placeholder="999 888 777"
         />
 
         {/* Email + botón enviar código */}
@@ -193,7 +207,7 @@ export default function UpgradeGuest() {
         />
 
         <AuthError error={error} />
-        
+
         <button
           type="submit"
           disabled={loading}

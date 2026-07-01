@@ -6,10 +6,12 @@ interface Props {
   side?: "left" | "right";
   icon: string;
   onClick: () => void;
+  forceHide?: boolean;
 }
 
-export default function ModalControl({ classname, onClick, icon, side = "left" }: Props) {
+export default function ModalControl({ classname, onClick, icon, side = "left", forceHide = false }: Props) {
   const { hidden } = useScrollHide();
+  const isHidden = hidden || forceHide;
 
   return (
     <button
@@ -27,7 +29,7 @@ export default function ModalControl({ classname, onClick, icon, side = "left" }
             : "right-0 border-r-0 rounded-tl-full rounded-bl-full"
         }
         ${
-          hidden
+          isHidden
             ? side === "left"
               ? "-translate-x-full"
               : "translate-x-full"

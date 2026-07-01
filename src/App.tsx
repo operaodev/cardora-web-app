@@ -11,6 +11,7 @@ import Inventory from "./pages/Inventory";
 import Wishlist from "./pages/Wishlist";
 import ProductPage from "./pages/ProductPage";
 import { NotFound } from "./pages/NotFound";
+import BundlePage from "./pages/BundlePage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/marketplace/:id" element={<ProductPage />} />
           <Route path="/inventory/me" element={<Inventory />} />
+           <Route path="/bundle/me" element={<BundlePage />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="*" element={<NotFound />} />
         </Route>

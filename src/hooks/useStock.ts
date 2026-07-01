@@ -1,8 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
+import { useEffect, useState } from "react";
 import type {
   Stock,
   Log,
+  FilterInput,
+  FilterOutput,
+  StockPage,
   CreateStockInput,
   QuantityInput,
   DecreaseInput,
@@ -15,9 +19,26 @@ const STOCK_KEY = "stock" as const;
 
 // ── Queries ────────────────────────────────────────────────────────────────
 
-async function fetchMyStock(): Promise<Stock[]> {
-  const { data } = await apiClient.get<Stock[]>("/stock/me");
-  console.log(data);
+async function fetchMyStock(input: FilterInput): Promise<StockPage> {
+  const { data } = await apiClient.post<StockPage>("/stock/me", input);
+  return data;
+}
+
+async function fetchStockByUserID(
+  userID: string,
+  input: FilterInput,
+): Promise<StockPage> {
+  const { data } = await apiClient.post<StockPage>(
+    `/stock/user/${userID}`,
+    input,
+  );
+  return data;
+}
+
+async function fetchMyStockFilters(input: string): Promise<FilterOutput> {
+  const { data } = await apiClient.post<FilterOutput>("/stock/me/filters", {
+    input,
+  });
   return data;
 }
 
@@ -31,10 +52,72 @@ async function fetchStockLogs(stockID: number): Promise<Log[]> {
   return data;
 }
 
-export function useMyStock() {
+/** Devuelve el stock paginado y filtrado del usuario autenticado. */
+export function useMyStock(input: FilterInput = {}) {
   return useQuery({
-    queryKey: [STOCK_KEY, "me"],
-    queryFn: fetchMyStock,
+    queryKey: [STOCK_KEY, "me", input],
+    queryFn: () => fetchMyStock(input),
+    retry: false,
+    placeholderData: (prev) => prev,
+  });
+}
+
+/** Devuelve el stock paginado y filtrado de cualquier usuario por su ID. */
+export function useStockByUserID(
+  userID: string | null,
+  input: FilterInput = {},
+) {
+  return useQuery({
+    queryKey: [STOCK_KEY, "user", userID, input],
+    queryFn: () => fetchStockByUserID(userID!, input),
+    enabled: !!userID,
+    retry: false,
+    placeholderData: (prev) => prev,
+  });
+}
+
+/**
+ * Retorna los valores únicos del stock del usuario para construir filtros.
+ * Reactivo al `input` de búsqueda con debounce de 300 ms.
+ */
+export function useMyStockFilters(input: string) {
+  const [debouncedInput, setDebouncedInput] = useState(input);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedInput(input), 300);
+    return () => clearTimeout(timer);
+  }, [input]);
+
+  return useQuery({
+    queryKey: [STOCK_KEY, "me", "filters", debouncedInput],
+    queryFn: () => fetchMyStockFilters(debouncedInput),
+    retry: false,
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Stock del usuario autenticado con scroll infinito.
+ * Sigue el mismo patrón que useInfiniteMarketCards:
+ * - `page` en el FilterInput actúa como página inicial (jump-to-page).
+ * - El pageParam controla la página real enviada al backend.
+ */
+export function useInfiniteMyStock(input: FilterInput | null) {
+  const initialPage = input?.page ?? 1;
+  // Excluye page del body — lo gestiona pageParam
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { page: _page, ...filterBody } = (input ?? {}) as FilterInput;
+
+  return useInfiniteQuery({
+    queryKey: [STOCK_KEY, "me", "infinite", filterBody, initialPage],
+    queryFn: ({ pageParam = initialPage }) =>
+      fetchMyStock({ ...filterBody, page: pageParam as number }),
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
+    getPreviousPageParam: (firstPage) =>
+      firstPage.page > 1 ? firstPage.page - 1 : undefined,
+    initialPageParam: initialPage,
+    enabled: input != null,
     retry: false,
   });
 }

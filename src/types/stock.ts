@@ -122,3 +122,36 @@ export interface OpenBoxInput {
   items: OpenBoxItem[];
   note?: string;
 }
+
+// ── Filtros y paginación ──────────────────────────────────────────────────
+
+export interface FilterInput {
+  input?: string;
+  type?: string;
+  tcg?: string;
+  lang?: string;
+  set_name?: string;
+  archetype?: string;
+  rarity?: string;
+  edition?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface FilterOutput {
+  type?: string[];
+  tcg?: string[];
+  lang?: string[];
+  set_name?: string[];
+  archetype?: string[];
+  rarity?: string[];
+  edition?: string[];
+}
+
+export interface StockPage {
+  items: Stock[];
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+}

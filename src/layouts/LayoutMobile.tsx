@@ -26,6 +26,12 @@ const NAV_ITEMS = [
     route: "/inventory/me",
     disabled: true,
   },
+  {
+    title: "Mis paquetes",
+    icon: "game-icons:cardboard-box-closed",
+    route: "/bundle/me",
+    disabled: false,
+  },
 ];
 
 function toggleTheme() {

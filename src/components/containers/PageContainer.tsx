@@ -349,7 +349,7 @@ export default function PageContainer<T extends object>({
         aria-hidden="true"
       />
 
-      <div className={`mx-auto w-11/12 ${gridClassName}`}>
+      <div className={`mx-auto w-10/12 ${gridClassName}`}>
         {/* Skeletons for previous page being fetched (prepended above content) */}
         {isFetchingPreviousPage &&
           Array.from({ length: pageLimit }).map((_, i) =>
