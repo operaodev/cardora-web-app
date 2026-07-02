@@ -8,6 +8,12 @@ import {
   ProductWishlistButton,
 } from "@/components/product/product";
 import { ProductOffers } from "@/components/product/productMarketpalce";
+import { useState } from "react";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
+import { ProductSidebar } from "@/components/product/ProductSidebar";
+import { DraggableRelatedCard } from "@/components/product/DraggableRelatedCard";
+import type { RelatedCardDTO } from "@/types/product";
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +29,8 @@ export default function ProductPage() {
 const ProductPageContent = ({ productId }: { productId: number }) => {
   const { data: product, isLoading, isError } = useProduct(productId);
   const navigate = useNavigate();
+  const [comparedCardId, setComparedCardId] = useState<number | null>(null);
+  const [activeDragData, setActiveDragData] = useState<RelatedCardDTO | null>(null);
 
   if (isError) {
     return <Navigate to={"/*"} />;
@@ -59,113 +67,142 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
       navigate(`/marketplace?${params.toString()}`);
     };
 
+    const handleDragStart = (event: DragStartEvent) => {
+      setActiveDragData(event.active.data.current);
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+      setActiveDragData(null);
+      if (event.over && event.over.id === "market-prices-box") {
+        setComparedCardId(Number(event.active.id));
+      } else {
+        setComparedCardId(null);
+      }
+    };
+
     return (
-      <main className="mx-auto w-11/12 pt-5 pb-8 space-y-5">
-        <div className="flex gap-2 mb-2.5">
-          <ProductWishlistButton productId={id} />
-          <h1 className="text-title text-lg font-bold">{name}</h1>
-        </div>
-        <div
-          className="
-            flex items-center w-fit max-w-full pr-5
-            font-semibold text-sm text-nowrap
-            border-indigo-600 dark:border-fuchsia-600
-            border-2 bevel-full rounded-tr-full rounded-br-full
-          "
-        >
-          <button
-            title={`Buscar ${set_external_id}`}
-            onClick={handleNavigateSet}
-            className="
-              flex items-center gap-1 truncate
-               bg-indigo-600 dark:bg-fuchsia-600
-              text-white py-2 pl-2 pr-4
-              rounded-tr-full rounded-br-full bevel-full
-            "
-          >
-            <Icon icon="game-icons:cardboard-box-closed" className="text-2xl" />
-            <p className="truncate">{isCard ? set_name : set_external_id}</p>
-          </button>
-          <span className="py-2 pl-2 text-title">
-            {code || set_region_code}
-          </span>
-        </div>
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <main className="mx-auto w-11/12 pt-5 pb-8 space-y-8">
+          <div className="flex flex-col md:flex-row gap-x-10 gap-y-6">
+            {/* Left Column: Main Product Details */}
+            <div className="flex-[2] space-y-5 min-w-0">
+              <div className="flex gap-2 mb-2.5">
+                <ProductWishlistButton productId={id} />
+                <h1 className="text-title text-lg font-bold">{name}</h1>
+              </div>
+              <div
+                className="
+                  flex items-center w-fit max-w-full pr-5
+                  font-semibold text-sm text-nowrap
+                  border-indigo-600 dark:border-fuchsia-600
+                  border-2 bevel-full rounded-tr-full rounded-br-full
+                "
+              >
+                <button
+                  title={`Buscar ${set_external_id}`}
+                  onClick={handleNavigateSet}
+                  className="
+                    flex items-center gap-1 truncate
+                    bg-indigo-600 dark:bg-fuchsia-600
+                    text-white py-2 pl-2 pr-4
+                    rounded-tr-full rounded-br-full bevel-full
+                  "
+                >
+                  <Icon icon="game-icons:cardboard-box-closed" className="text-2xl" />
+                  <p className="truncate">{isCard ? set_name : set_external_id}</p>
+                </button>
+                <span className="py-2 pl-2 text-title">
+                  {code || set_region_code}
+                </span>
+              </div>
 
-        <ProductImage product={product} />
+              <ProductImage product={product} />
 
-        <div className="flex justify-between flex-wrap gap-3">
-          <ProductField field="Rareza" value={rarity} />
-          <ProductField field="Edición" value={edition} />
-          <ProductField field="Categorías" value={isCard ? tags : set_type} />
-          <ProductField field="Arquetipo" value={archetype} />
-        </div>
+              <div className="flex justify-between flex-wrap gap-3">
+                <ProductField field="Rareza" value={rarity} />
+                <ProductField field="Edición" value={edition} />
+                <ProductField field="Categorías" value={isCard ? tags : set_type} />
+                <ProductField field="Arquetipo" value={archetype} />
+              </div>
 
-        {isCard && (
-          <div className="space-y-1">
-            <h3 className="text-high uppercase text-sm font-semibold">
-              Descripción
-            </h3>
-            <p className="text-content text-sm">{description}</p>
+              {isCard && (
+                <div className="space-y-1">
+                  <h3 className="text-high uppercase text-sm font-semibold">
+                    Descripción
+                  </h3>
+                  <p className="text-content text-sm">{description}</p>
+                </div>
+              )}
+
+              <div
+                className="
+                  inline-flex items-center gap-2 px-4 py-2
+                  rounded-full text-sm font-semibold
+                  glass-aurora
+                "
+              >
+                <Icon icon="mdi-eye" className="text-indigo-500 text-xl" />
+                <p className="text-aurora">{wanted} búsquedas este mes</p>
+              </div>
+
+              <hr className="border-surface" />
+
+              <details className="group">
+                <summary className="text-sm icon-interactive cursor-pointer select-none">
+                  Más información
+                </summary>
+                <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {product.set_code && (
+                    <ProductInfo label="Set code" value={product.set_code} />
+                  )}
+                  <ProductInfo label="Tipo" value={product.type} />
+                  {product.lang && (
+                    <ProductInfo label="Idioma" value={product.lang} />
+                  )}
+                  {product.serie_code && (
+                    <ProductInfo label="Serie" value={product.serie_code} />
+                  )}
+                  {product.set_region_code && (
+                    <ProductInfo label="Región" value={product.set_region_code} />
+                  )}
+                  {product.set_type && (
+                    <ProductInfo label="Tipo de set" value={product.set_type} />
+                  )}
+                  {product.quantity_per_set > 0 && (
+                    <ProductInfo
+                      label="Cartas por set"
+                      value={
+                        product.quantity_per_set > 1
+                          ? `${product.quantity_per_set} cartas`
+                          : "1 carta"
+                      }
+                    />
+                  )}
+                  {product.quantity_per_box > 0 && (
+                    <ProductInfo
+                      label="Sobres por caja"
+                      value={`${product.quantity_per_box}`}
+                    />
+                  )}
+                </div>
+              </details>
+            </div>
+
+            {/* Right Column: Sidebar */}
+            <div className="flex-1 w-full md:max-w-sm">
+              <ProductSidebar product={product} comparedCardId={comparedCardId} />
+            </div>
           </div>
-        )}
 
-        <div
-          className="
-            inline-flex items-center gap-2 px-4 py-2
-            rounded-full text-sm font-semibold
-            glass-aurora
-          "
-        >
-          <Icon icon="mdi-eye" className="text-indigo-500 text-xl" />
-          <p className="text-aurora">{wanted} búsquedas este mes</p>
-        </div>
-
-        <hr className="border-surface" />
-
-        <details className="group">
-          <summary className="text-sm icon-interactive cursor-pointer select-none">
-            Más información
-          </summary>
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {product.set_code && (
-              <ProductInfo label="Set code" value={product.set_code} />
-            )}
-            <ProductInfo label="Tipo" value={product.type} />
-            {product.lang && (
-              <ProductInfo label="Idioma" value={product.lang} />
-            )}
-            {product.serie_code && (
-              <ProductInfo label="Serie" value={product.serie_code} />
-            )}
-            {product.set_region_code && (
-              <ProductInfo label="Región" value={product.set_region_code} />
-            )}
-            {product.set_type && (
-              <ProductInfo label="Tipo de set" value={product.set_type} />
-            )}
-            {product.quantity_per_set > 0 && (
-              <ProductInfo
-                label="Cartas por set"
-                value={
-                  product.quantity_per_set > 1
-                    ? `${product.quantity_per_set} cartas`
-                    : "1 carta"
-                }
-              />
-            )}
-            {product.quantity_per_box > 0 && (
-              <ProductInfo
-                label="Sobres por caja"
-                value={`${product.quantity_per_box}`}
-              />
-            )}
-          </div>
-        </details>
-
-        {/*<ProductAnalysis product={product} />*/}
-
-        <ProductOffers id={id} name={name} code={code} rarity={rarity} />
-      </main>
+          <ProductOffers id={id} name={name} code={code} rarity={rarity} />
+        </main>
+        
+        <DragOverlay>
+          {activeDragData ? (
+            <DraggableRelatedCard card={activeDragData} isDraggingOverlay />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     );
   }
 
