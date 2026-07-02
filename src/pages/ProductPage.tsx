@@ -68,7 +68,7 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
     };
 
     const handleDragStart = (event: DragStartEvent) => {
-      setActiveDragData(event.active.data.current);
+      setActiveDragData((event.active.data.current as RelatedCardDTO) || null);
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -196,7 +196,7 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
 
           <ProductOffers id={id} name={name} code={code} rarity={rarity} />
         </main>
-        
+
         <DragOverlay>
           {activeDragData ? (
             <DraggableRelatedCard card={activeDragData} isDraggingOverlay />
