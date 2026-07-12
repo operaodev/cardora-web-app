@@ -39,3 +39,10 @@ export interface UpgradeGuestInput {
   code: string;
   phone_number?: string;
 }
+
+export interface UpdateProfileInput {
+  name: string;
+  phone_number?: string;
+  old_password?: string;
+  password?: string;
+}

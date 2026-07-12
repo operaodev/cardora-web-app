@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Icon } from "@iconify-icon/react";
 import {
   useWishlist,
@@ -119,18 +120,18 @@ function WishlistItemCard({ item }: { item: WishlistItem }) {
     <li className="flex gap-4 p-4 card-surface rounded-xl">
       {/* Thumbnail */}
       {image && (
-        <div className="relative shrink-0 w-14 aspect-475/696 self-start">
+        <Link to={`/marketplace/${product.id}`} className="relative shrink-0 w-14 aspect-475/696 self-start block hover:opacity-80 transition-opacity">
           <img
             src={image}
             alt={product.name}
             className="absolute inset-0 w-full h-full object-contain"
           />
-        </div>
+        </Link>
       )}
 
       {/* Info */}
       <div className="flex-1 min-w-0 flex flex-col justify-between gap-2">
-        <div className="space-y-0.5">
+        <Link to={`/marketplace/${product.id}`} className="space-y-0.5 block hover:opacity-80 transition-opacity">
           <p className="text-sm font-semibold text-title truncate">
             {product.name}
           </p>
@@ -140,7 +141,7 @@ function WishlistItemCard({ item }: { item: WishlistItem }) {
               {[product.code, product.rarity].filter(Boolean).join(" · ")}
             </p>
           )}
-        </div>
+        </Link>
 
         {/* Bottom row: quantity controls + actions */}
         <div className="flex items-center gap-3 flex-wrap">

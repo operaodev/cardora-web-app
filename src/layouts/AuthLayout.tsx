@@ -1,13 +1,22 @@
 import { Icon } from "@iconify-icon/react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 export default function AuthLayout() {
+  const navigate = useNavigate();
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center gap-3 px-4 py-8">
+    <main className="min-h-screen flex flex-col justify-center items-center gap-3 px-4 py-8 relative">
+      <button 
+        onClick={() => navigate(-1)} 
+        className="absolute top-6 right-6 md:top-8 md:right-8 text-content hover:text-title transition-colors focus:outline-none"
+        aria-label="Cerrar"
+      >
+        <Icon icon="mdi:close" className="text-3xl" />
+      </button>
+
       <Link className="text-aurora font-bold text-2xl" to="/">
         Cardora
       </Link>
-      <div className="w-full max-w-md border-surface rounded-xl bg-surface shadow-md shadow-surface">
+      <div className="w-full max-w-md border-surface rounded-xl bg-surface shadow-md shadow-surface relative">
         <Outlet />
       </div>
     </main>

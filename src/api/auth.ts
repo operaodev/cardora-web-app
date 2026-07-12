@@ -6,6 +6,7 @@ import type {
   User,
   SendCodeInput,
   UpgradeGuestInput,
+  UpdateProfileInput,
 } from "@/types/user";
 import { useUserStore } from "@/stores/useUserStore";
 
@@ -53,6 +54,11 @@ export async function upgradeGuest(
 
 export async function getMe(): Promise<User> {
   const { data } = await apiClient.get<User>("/users/me");
+  return data;
+}
+
+export async function updateProfile(input: UpdateProfileInput): Promise<User> {
+  const { data } = await apiClient.put<User>("/users/me", input);
   return data;
 }
 

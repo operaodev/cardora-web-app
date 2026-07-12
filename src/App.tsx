@@ -12,6 +12,7 @@ import Wishlist from "./pages/Wishlist";
 import ProductPage from "./pages/ProductPage";
 import { NotFound } from "./pages/NotFound";
 import BundlePage from "./pages/BundlePage";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/inventory/me" element={<Inventory />} />
            <Route path="/bundle/me" element={<BundlePage />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

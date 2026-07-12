@@ -75,6 +75,12 @@ export interface FilterInput {
   input: string;
   tcgs?: string[];
   langs?: string[];
+  rarities?: string[];
+  card_types?: string[];
+  conditions?: string[];
+  min_price?: number;
+  max_price?: number;
+  availability?: string;
   page?: number;
   limit?: number;
   product_Type?: string;
