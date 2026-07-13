@@ -38,7 +38,7 @@ export const ResumenCard = ({ resumen }: { resumen: ProductResume }) => {
           alt={name}
         />
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <div className="space-y-1 font-medium">
           <h2 className="text-sm text-title font-semibold">{name}</h2>
           <p className="text-xs text-content">{set_name}</p>

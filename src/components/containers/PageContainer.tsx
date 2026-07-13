@@ -90,7 +90,6 @@ export default function PageContainer<T extends object>({
   onJumpToPage,
   renderItem,
   renderSkeleton,
-  gridClassName = "grid grid-cols-1 sm:grid-cols-2 gap-4",
 }: PageContainerProps<T>) {
   // ── Derived page metadata ────────────────────────────────────────────────
   const loadedFrom = data?.pages[0]?.page ?? 0;
@@ -349,11 +348,13 @@ export default function PageContainer<T extends object>({
         aria-hidden="true"
       />
 
-      <div className={`mx-auto w-10/12 ${gridClassName}`}>
+      <div className={`mx-auto w-full px-5 grid gap-4`} style={{
+        gridTemplateColumns: `repeat(auto-fill, minmax(350px, 1fr))`,
+      }}>
         {/* Skeletons for previous page being fetched (prepended above content) */}
         {isFetchingPreviousPage &&
           Array.from({ length: pageLimit }).map((_, i) =>
-            renderSkeleton(`skeleton-prev-${i}`),
+            renderSkeleton(`skeleton-prev-${i}`),     
           )}
 
         {/* ── All loaded pages ── */}
