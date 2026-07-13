@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   AuthError,
   AuthFooter,
@@ -12,6 +12,10 @@ import type { LoginInput } from "@/types/user";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get("redirect") || "/";
+
   const { login, loading, error } = useAuth();
   const [localError, setLocalError] = useState<string | null>(null);
   const displayError = localError || error;
@@ -42,7 +46,7 @@ export default function Login() {
 
     try {
       await login(input);
-      navigate("/");
+      navigate(redirectTo);
     } catch {
       // error is set by the hook
     }

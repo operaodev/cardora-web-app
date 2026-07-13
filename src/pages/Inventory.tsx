@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify-icon/react";
 import ModalControl from "@/components/controls/ModalControl";
-import { OverlayTransition } from "@/components/modal/Overlay";
+import { OverlayTransition, Overlay } from "@/components/modal/Overlay";
 import PageContainer from "@/components/containers/PageContainer";
-import { useInfiniteMyStock, useMyStockFilters } from "@/hooks/useStock";
+import { useInfiniteMyStock, useMyStockFilters, useDeleteStock } from "@/hooks/useStock";
 import type { FilterInput, Stock } from "@/types/stock";
 import { CreateStock } from "@/components/inventory/inventory";
 import { StockCard } from "@/components/inventory/StockCard";
@@ -16,11 +16,26 @@ import { useExportStockImages } from "@/hooks/useExportStockImages";
 export default function Inventory() {
   const [showCreate, setShowCreate] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [startPage, setStartPage] = useState(1);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedStockIds, setSelectedStockIds] = useState<number[]>([]);
 
   const { exportImages, isExporting } = useExportStockImages();
+  const deleteStock = useDeleteStock();
+
+  const handleDeleteSelected = async () => {
+    try {
+      for (const id of selectedStockIds) {
+        await deleteStock.mutateAsync(id);
+      }
+      setSelectedStockIds([]);
+      setIsEditMode(false);
+      setShowDeleteConfirm(false);
+    } catch (err) {
+      alert("Hubo un error al eliminar los elementos.");
+    }
+  };
 
   // Filtros activos
   const [filters, setFilters] = useState<FilterInput>({});
@@ -85,14 +100,50 @@ export default function Inventory() {
         forceHide={!isEditMode}
       />
 
-      {/* ── Botón de Mochila / Acción Lote (Solo en Edit Mode) ───────── */}
+      {/* ── Botón Eliminar Lote (Solo en Edit Mode) ───────── */}
       <ModalControl
-        onClick={() => alert(`Acción para las ${selectedStockIds.length} cartas seleccionadas.`)}
-        icon="mdi:backpack"
+        onClick={() => {
+          if (selectedStockIds.length === 0) {
+            alert("Por favor selecciona al menos una carta para eliminar.");
+            return;
+          }
+          setShowDeleteConfirm(true);
+        }}
+        icon="mdi:trash-can-outline"
         side="right"
-        classname="bottom-20"
+        classname="bottom-20 text-red-500 hover:text-red-600"
         forceHide={!isEditMode}
       />
+
+      {/* ── Modal Confirmar Eliminación ───────── */}
+      {showDeleteConfirm && (
+        <Overlay onClose={() => setShowDeleteConfirm(false)}>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-surface p-6 rounded-2xl shadow-xl max-w-md w-[90%] space-y-4"
+          >
+            <h3 className="text-xl font-bold text-title">¿Eliminar cartas?</h3>
+            <p className="text-content text-sm">
+              ¿Estás seguro de que deseas eliminar las {selectedStockIds.length} cartas seleccionadas? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 rounded-xl bg-raised hover:bg-raised/80 text-title font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                disabled={deleteStock.isPending}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors disabled:opacity-50"
+              >
+                {deleteStock.isPending ? "Eliminando..." : "Aceptar"}
+              </button>
+            </div>
+          </div>
+        </Overlay>
+      )}
 
       {/* ── Botón de Cancelar / Cerrar Edit (Solo en Edit Mode) ───────── */}
       <ModalControl

@@ -82,13 +82,20 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
 
     return (
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <main className="mx-auto w-11/12 pt-5 pb-8 space-y-8">
-          <div className="flex flex-col md:flex-row gap-x-10 gap-y-6">
-            {/* Left Column: Main Product Details */}
-            <div className="flex-[2] space-y-5 min-w-0">
-              <div className="flex gap-2 mb-2.5">
+        <main className="mx-auto w-11/12 pt-12 md:pt-16 pb-12 space-y-8">
+          <div className="flex flex-col xl:flex-row gap-x-8 gap-y-8">
+            
+            {/* Left Column: Product Image */}
+            <div className="w-full lg:w-[27%] shrink-0 mx-auto lg:mx-0">
+              <ProductImage product={product} />
+              {/* Aquí podrían ir las imágenes miniatura adicionales debajo si se cuenta con la data */}
+            </div>
+
+            {/* Middle Column: Main Product Details */}
+            <div className="flex-1 space-y-5 min-w-0">
+              <div className="flex gap-2 mb-2.5 items-center">
                 <ProductWishlistButton productId={id} />
-                <h1 className="text-title text-lg font-bold">{name}</h1>
+                <h1 className="text-title text-2xl font-bold">{name}</h1>
               </div>
               <div
                 className="
@@ -116,21 +123,19 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
                 </span>
               </div>
 
-              <ProductImage product={product} />
-
-              <div className="flex justify-between flex-wrap gap-3">
-                <ProductField field="Rareza" value={rarity} />
+              <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
                 <ProductField field="Edición" value={edition} />
+                <ProductField field="Rareza" value={rarity} />
                 <ProductField field="Categorías" value={isCard ? tags : set_type} />
                 <ProductField field="Arquetipo" value={archetype} />
               </div>
 
               {isCard && (
                 <div className="space-y-1">
-                  <h3 className="text-high uppercase text-sm font-semibold">
+                  <h3 className="text-high uppercase text-xs font-bold tracking-widest mb-2">
                     Descripción
                   </h3>
-                  <p className="text-content text-sm">{description}</p>
+                  <p className="text-content text-sm leading-relaxed">{description}</p>
                 </div>
               )}
 
@@ -138,58 +143,59 @@ const ProductPageContent = ({ productId }: { productId: number }) => {
                 className="
                   inline-flex items-center gap-2 px-4 py-2
                   rounded-full text-sm font-semibold
-                  glass-aurora
+                  glass-aurora mt-2
                 "
               >
                 <Icon icon="mdi-eye" className="text-indigo-500 text-xl" />
                 <p className="text-aurora">{wanted} búsquedas este mes</p>
               </div>
 
-              <hr className="border-surface" />
-
-              <details className="group">
-                <summary className="text-sm icon-interactive cursor-pointer select-none">
-                  Más información
-                </summary>
-                <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {product.set_code && (
-                    <ProductInfo label="Set code" value={product.set_code} />
-                  )}
-                  <ProductInfo label="Tipo" value={product.type} />
-                  {product.lang && (
-                    <ProductInfo label="Idioma" value={product.lang} />
-                  )}
-                  {product.serie_code && (
-                    <ProductInfo label="Serie" value={product.serie_code} />
-                  )}
-                  {product.set_region_code && (
-                    <ProductInfo label="Región" value={product.set_region_code} />
-                  )}
-                  {product.set_type && (
-                    <ProductInfo label="Tipo de set" value={product.set_type} />
-                  )}
-                  {product.quantity_per_set > 0 && (
-                    <ProductInfo
-                      label="Cartas por set"
-                      value={
-                        product.quantity_per_set > 1
-                          ? `${product.quantity_per_set} cartas`
-                          : "1 carta"
-                      }
-                    />
-                  )}
-                  {product.quantity_per_box > 0 && (
-                    <ProductInfo
-                      label="Sobres por caja"
-                      value={`${product.quantity_per_box}`}
-                    />
-                  )}
-                </div>
-              </details>
+              <div className="pt-4">
+                <details className="group border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden" open>
+                  <summary className="text-sm font-bold tracking-wide text-high uppercase bg-gray-50 dark:bg-[#111111] p-4 cursor-pointer select-none flex items-center justify-between">
+                    Más información
+                    <Icon icon="mdi:chevron-down" className="text-xl transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-4 bg-white dark:bg-[#0a0a0a]">
+                    {product.set_code && (
+                      <ProductInfo label="Set code" value={product.set_code} />
+                    )}
+                    <ProductInfo label="Tipo" value={product.type} />
+                    {product.lang && (
+                      <ProductInfo label="Idioma" value={product.lang} />
+                    )}
+                    {product.serie_code && (
+                      <ProductInfo label="Serie" value={product.serie_code} />
+                    )}
+                    {product.set_region_code && (
+                      <ProductInfo label="Región" value={product.set_region_code} />
+                    )}
+                    {product.set_type && (
+                      <ProductInfo label="Tipo de set" value={product.set_type} />
+                    )}
+                    {product.quantity_per_set > 0 && (
+                      <ProductInfo
+                        label="Cartas por set"
+                        value={
+                          product.quantity_per_set > 1
+                            ? `${product.quantity_per_set} cartas`
+                            : "1 carta"
+                        }
+                      />
+                    )}
+                    {product.quantity_per_box > 0 && (
+                      <ProductInfo
+                        label="Sobres por caja"
+                        value={`${product.quantity_per_box}`}
+                      />
+                    )}
+                  </div>
+                </details>
+              </div>
             </div>
 
             {/* Right Column: Sidebar */}
-            <div className="flex-1 w-full md:max-w-sm">
+            <div className="w-full lg:w-1/4 shrink-0 md:max-w-sm mx-auto lg:mx-0">
               <ProductSidebar product={product} comparedCardId={comparedCardId} />
             </div>
           </div>

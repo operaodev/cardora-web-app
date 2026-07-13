@@ -1,63 +1,35 @@
-import { useState } from "react";
-import { useInfiniteMarketCards } from "@/hooks/useMarketplace";
-import type { ProductResume } from "@/types/marketplace";
-import { useSearchParams } from "react-router-dom";
-import PageContainer from "@/components/containers/PageContainer";
-import MarketplaceFilterBar from "@/components/marketplace/MarketplaceFilterBar";
-import { ResumenCard, SkeletonCard } from "@/components/marketplace/ResumenCard";
+import HeroShowcase from "@/components/home/HeroShowcase";
+import TopStockTable from "@/components/home/TopStockTable";
+import HowItWorks from "@/components/home/HowItWorks";
+import FAQ from "@/components/home/FAQ";
+import Footer from "@/components/home/Footer";
 
 export default function Home() {
-  const [searchParams] = useSearchParams();
-
-  const query = searchParams.get("q") || "";
-  const selectedLang = searchParams.get("lang") || "";
-  const selectedTcg = searchParams.get("game") || "";
-  const selectedProductType = searchParams.get("product_type") || "";
-  const selectedCondition = searchParams.get("condition") || "";
-  const selectedCardType = searchParams.get("card_type") || "";
-  const selectedRarity = searchParams.get("rarity") || "";
-  const selectedAvailability = searchParams.get("availability") || "";
-  const minPrice = searchParams.get("min_price") ? Number(searchParams.get("min_price")) : undefined;
-  const maxPrice = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : undefined;
-
-  const [startPage, setStartPage] = useState(1);
-
-  const filterInput = {
-    input: query,
-    limit: 30,
-    page: startPage,
-    product_Type: selectedProductType || undefined,
-    ...(selectedLang ? { langs: [selectedLang] } : {}),
-    ...(selectedTcg ? { tcgs: [selectedTcg] } : {}),
-    ...(selectedCondition ? { conditions: [selectedCondition] } : {}),
-    ...(selectedCardType ? { card_types: [selectedCardType] } : {}),
-    ...(selectedRarity ? { rarities: [selectedRarity] } : {}),
-    ...(selectedAvailability ? { availability: selectedAvailability } : {}),
-    ...(minPrice !== undefined ? { min_price: minPrice } : {}),
-    ...(maxPrice !== undefined ? { max_price: maxPrice } : {}),
-  };
-
-  const infiniteQuery = useInfiniteMarketCards(filterInput);
-
   return (
-    <main className="flex-1 flex flex-col h-full bg-background overflow-hidden">
-      <MarketplaceFilterBar />
-      <div className="flex-1 overflow-y-auto py-3 px-4">
-        <PageContainer<ProductResume>
-          gridClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-          data={infiniteQuery.data}
-          isLoading={infiniteQuery.isLoading}
-          isFetchingNextPage={infiniteQuery.isFetchingNextPage}
-          isFetchingPreviousPage={infiniteQuery.isFetchingPreviousPage}
-          hasNextPage={infiniteQuery.hasNextPage}
-          hasPreviousPage={infiniteQuery.hasPreviousPage}
-          fetchNextPage={infiniteQuery.fetchNextPage}
-          fetchPreviousPage={infiniteQuery.fetchPreviousPage}
-          onJumpToPage={setStartPage}
-          renderItem={(item) => <ResumenCard key={item.id} resumen={item} />}
-          renderSkeleton={(key) => <SkeletonCard key={key} />}
-        />
+    <main className="flex-1 flex flex-col h-full bg-background overflow-y-auto">
+      <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 py-6 flex-1">
+        {/* ROW 1: Hero & Table */}
+        <div className="flex flex-col xl:flex-row gap-8 w-full items-stretch">
+          {/* Columna Izquierda: Hero Showcase */}
+          <div className="w-full xl:w-[70%] shrink-0">
+            <HeroShowcase />
+          </div>
+          
+          {/* Columna Derecha: Top Stock Table */}
+          <div className="w-full xl:w-[30%] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col">
+            <TopStockTable />
+          </div>
+        </div>
+
+        {/* ROW 2: How It Works */}
+        <HowItWorks />
+
+        {/* ROW 3: FAQ */}
+        <FAQ />
       </div>
+
+      {/* FOOTER */}
+      <Footer />
     </main>
   );
 }

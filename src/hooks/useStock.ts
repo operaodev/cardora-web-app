@@ -157,6 +157,16 @@ export function useCreateStock() {
   });
 }
 
+export function useDeleteStock() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      await apiClient.delete(`/stock/${id}`);
+    },
+    onSuccess: () => invalidateStock(qc),
+  });
+}
+
 export function useRestock() {
   const qc = useQueryClient();
   return useMutation({
