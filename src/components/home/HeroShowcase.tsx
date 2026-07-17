@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
 import { useState, useEffect } from "react";
 
@@ -78,8 +78,8 @@ export default function HeroShowcase() {
     navigate("/marketplace");
   };
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
+  // const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  // const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
 
   return (
     <div className="relative w-full h-full min-h-[650px] bg-white dark:bg-[#0a0a0a] rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm flex items-center justify-center">
