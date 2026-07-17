@@ -256,10 +256,9 @@ export const StockCard = ({ item, isSelectable = false, isSelected = false, onSe
       : set_code
         ? ` (${set_region_code})`
         : "");
-  const print =
-    rarity +
-    ` (${rarity_code && `${rarity_code}`})` +
-    (edition && ` - ${edition}`);
+  const print = [rarity, rarity_code && `(${rarity_code})`, edition && `- ${edition}`]
+    .filter(Boolean)
+    .join(" ");
 
   const cardImage = print_url_large || images?.[0].image_url;
 
@@ -455,7 +454,7 @@ const StockActionsModalContent = ({
         onClick={(e) => e.stopPropagation()}
         className="
           flex flex-col
-          h-[90dvh] w-11/12 max-w-6xl
+          h-[90dvh] max-h-175 w-11/12 max-w-2xl
           bg-surface border-surface border
           rounded-lg
         "
