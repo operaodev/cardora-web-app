@@ -245,6 +245,7 @@ export const StockCard = ({ item, isSelectable = false, isSelected = false, onSe
     set_region_code,
     print_url_large,
     set_image_large,
+    images,
   } = product;
 
   const displayCondition = condition.replaceAll("_", " ");
@@ -259,6 +260,8 @@ export const StockCard = ({ item, isSelectable = false, isSelected = false, onSe
     rarity +
     ` (${rarity_code && `${rarity_code}`})` +
     (edition && ` - ${edition}`);
+
+  const cardImage = print_url_large || images?.[0].image_url;
 
   const hasDiscount = discount_price > 0 && discount_price < price;
 
@@ -325,7 +328,7 @@ export const StockCard = ({ item, isSelectable = false, isSelected = false, onSe
       <div className="relative w-full aspect-475/696">
         <img
           className="absolute inset-0 w-full h-full object-contain"
-          src={type === "card" ? print_url_large : set_image_large}
+          src={type === "card" ? cardImage : set_image_large}
           alt={name}
         />
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useInfiniteMarketCards } from "@/hooks/useMarketplace";
 import type { ProductResume } from "@/types/marketplace";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import PageContainer from "@/components/containers/PageContainer";
 import MarketplaceFilterBar from "@/components/marketplace/MarketplaceFilterBar";
 import { ResumenCard, SkeletonCard } from "@/components/marketplace/ResumenCard";
@@ -47,7 +47,7 @@ export default function Marketplace() {
   return (
     <main className="flex-1 flex flex-col h-full bg-background overflow-hidden">
       <MarketplaceFilterBar />
-      <div className="flex-1 overflow-y-auto py-3 px-4">
+      <div className="flex-1 overflow-y-auto py-3">
       <PageContainer<ProductResume>
         gridClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         data={infiniteQuery.data}
@@ -66,4 +66,3 @@ export default function Marketplace() {
     </main>
   );
 }
-
