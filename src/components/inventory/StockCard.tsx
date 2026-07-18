@@ -1223,7 +1223,7 @@ function LogEntry({
         )}
 
         {log.note && (
-          <p className="text-[10px] text-subtle mt-0.5 italic">{log.note}</p>
+          <p className="text-sm text-subtle mt-0.5 italic">{log.note}</p>
         )}
 
         {log.parent_log_id && (
